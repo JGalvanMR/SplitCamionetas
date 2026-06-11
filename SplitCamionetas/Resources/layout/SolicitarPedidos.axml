@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="#111827">
+	<TextView
+		android:textColor="@android:color/white"
+		android:textSize="16sp"
+		android:text="Small Text"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/usuario" />
+	<TextView
+		android:textColor="@android:color/white"
+		android:textSize="16sp"
+		android:text="Pedido:"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/textView2"
+		android:singleLine="true"
+		android:imeOptions="actionDone" />
+	<EditText
+		android:inputType="number"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/agregarpedido" />
+	<TextView
+		android:textColor="@android:color/white"
+		android:textSize="16sp"
+		android:text="Listado de Pedidos Agregados:"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/textView3" />
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
+		<Spinner
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/pedidos"
+			android:layout_marginBottom="11.5dp"
+			android:popupBackground="#233150"
+			android:spinnerMode="dropdown"
+			android:foregroundTint="@android:color/white"
+			android:backgroundTint="@android:color/white"/>
+	</LinearLayout>
+	<Button
+		android:textColor="@android:color/white"
+		android:textSize="16sp"
+		android:text="Capturar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/button1"
+		android:layout_marginTop="0.0dp" />
+	<TextView
+		android:textColor="@android:color/white"
+		android:textSize="16sp"
+		android:text="DETALLE DE PRODUCTO:"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/textView4" />
+	<GridView
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:numColumns="1"
+		android:id="@+id/gvCtrl"
+		android:layout_weight="1"
+		android:columnWidth="150dp" />
+</LinearLayout>

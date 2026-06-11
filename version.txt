@@ -1,0 +1,5 @@
+{
+    "versionCode":1,
+    "versionName":"0.1",
+    "downloadURL":"http://mrlucky.com.mx/Splittrailers/SplitTrailers.apk"
+}
