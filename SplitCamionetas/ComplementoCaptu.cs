@@ -556,23 +556,23 @@ namespace SplitCamionetas
                                             {
                                                 RunOnUiThread(() => Guardar.Enabled = true);
 
-                                                if ((ValiFechacad == "N"))
-                                                {
-                                                    RunOnUiThread(() => Guardar.Enabled = false);
+                                                //if ((ValiFechacad == "N"))
+                                                //{
+                                                //    RunOnUiThread(() => Guardar.Enabled = false);
 
-                                                    et = new EditText(this);
-                                                    et.InputType = Android.Text.InputTypes.TextVariationPassword | Android.Text.InputTypes.ClassText;
-                                                    et.LongClickable = false;
-                                                    et.Hint = "Password";
-                                                    AlertDialog.Builder ad = new AlertDialog.Builder(this);
-                                                    ad.SetTitle("Autorizacion Folios Adelantados");
-                                                    ad.SetCancelable(false);
-                                                    ad.SetView(et);
-                                                    ad.SetPositiveButton(Html.FromHtml("<font face = 'Comic Sans MS, arial' color='#DF0101' size = '10'>Guardar</font>"), SaveName);
-                                                    ad.SetNegativeButton(Html.FromHtml("<font face = 'Comic Sans MS, arial' color='#DF0101' size = '10'>Cancelar</font>"), CancelAction);
-                                                    RunOnUiThread(() => ad.Show());
-                                                    //RunOnUiThread(() => fnShowCustomAlertDialogCancel());
-                                                }
+                                                //    et = new EditText(this);
+                                                //    et.InputType = Android.Text.InputTypes.TextVariationPassword | Android.Text.InputTypes.ClassText;
+                                                //    et.LongClickable = false;
+                                                //    et.Hint = "Password";
+                                                //    AlertDialog.Builder ad = new AlertDialog.Builder(this);
+                                                //    ad.SetTitle("Autorizacion Folios Adelantados");
+                                                //    ad.SetCancelable(false);
+                                                //    ad.SetView(et);
+                                                //    ad.SetPositiveButton(Html.FromHtml("<font face = 'Comic Sans MS, arial' color='#DF0101' size = '10'>Guardar</font>"), SaveName);
+                                                //    ad.SetNegativeButton(Html.FromHtml("<font face = 'Comic Sans MS, arial' color='#DF0101' size = '10'>Cancelar</font>"), CancelAction);
+                                                //    RunOnUiThread(() => ad.Show());
+                                                //    //RunOnUiThread(() => fnShowCustomAlertDialogCancel());
+                                                //}
 
                                             }
                                             else
