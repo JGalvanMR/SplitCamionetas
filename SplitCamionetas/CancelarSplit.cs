@@ -1,25 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Data.SqlClient;
-using System.Data;
-using SplitCamionetas.Modal;
-using Android.App;
+﻿using Android.App;
 using Android.Content;
+using Android.Icu.Text;
 using Android.OS;
 using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Android.Views.InputMethods;
-using SQLite;
-using SplitCamionetas.Models;
-using System.IO;
 using Android.Text;
-using Java.Util;
-using Android.Icu.Text;
-using System.Threading;
+using Android.Views;
+using Android.Views.InputMethods;
+using Android.Widget;
 using Java.Lang;
+using Java.Util;
+using Plugin.DeviceInfo;
+using SplitCamionetas.Modal;
+using SplitCamionetas.Models;
+using SQLite;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading;
 
 namespace SplitCamionetas
 {
@@ -312,7 +313,8 @@ namespace SplitCamionetas
             Android.Telephony.TelephonyManager mTelephonyMgr;
             mTelephonyMgr = (Android.Telephony.TelephonyManager)GetSystemService(TelephonyService);
             //IMEI number  
-            string imei = mTelephonyMgr.DeviceId;
+            //string imei = mTelephonyMgr.DeviceId;
+            string imei = getDeviceID();
 
 
             string cadenas = "INSERT INTO TB_REGISTRO_MOVIMIENTOS(FECHA,NOM_COMPU,NOM_USU,TIPO_MOV,OP_CLAVE,FOLIO,DETALLE,SISTEMA,MOV_FOLIO) " +
@@ -442,6 +444,15 @@ namespace SplitCamionetas
             thisConnection.Close();
 
             return listItem;
+        }
+
+        private string getDeviceID()
+        {
+            Android.Telephony.TelephonyManager telephonyManager;
+            telephonyManager = (Android.Telephony.TelephonyManager)GetSystemService(TelephonyService);
+            //string deviceid=telephonyManager.DeviceId;
+            string deviceid = CrossDeviceInfo.Current.Id;
+            return deviceid;
         }
 
     }

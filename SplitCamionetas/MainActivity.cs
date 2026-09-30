@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.Locations;
 using Android.Net;
 using Android.OS;
@@ -23,11 +24,11 @@ using Xamarin.Android;
 
 namespace SplitCamionetas
 {
-    [Activity(Label = "SplitCamionetas", MainLauncher = true)]
+    [Activity(Label = "SplitCamionetas", Theme = "@android:style/Theme.Material", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : Activity
     {
-        //public static string cadenaConexion = "Persist Security Info=False;user id=sa; password=Gabira2026$;Initial Catalog =GAB_Irapuato; server=tcp:189.206.160.206,2352; Connect Timeout = 130";
-        public static string cadenaConexion = "Persist Security Info=False;user id=sa; password=Gabira2026$;Initial Catalog =GAB_Irapuato; server=tcp:192.168.123.6,1433; Connect Timeout = 130";
+        public static string cadenaConexion = "Persist Security Info=False;user id=sa; password=Gabira2026$;Initial Catalog =GAB_Irapuato; server=tcp:189.206.160.206,2352; Connect Timeout = 130";
+        //public static string cadenaConexion = "Persist Security Info=False;user id=sa; password=Gabira2026$;Initial Catalog =GAB_Irapuato; server=tcp:192.168.123.6,1433; Connect Timeout = 130";
 
         public static int captura = 0;
         SqlCommand cmnd = new SqlCommand();
@@ -55,7 +56,8 @@ namespace SplitCamionetas
         //Variables del servicio Web
         Context context;
         Java.Lang.Runnable listener;
-        private static string INFO_FILE = "http://192.168.123.4:81/EmbarquesApk/APK_SplitCamionetas/version.txt";
+        //private static string INFO_FILE = "http://192.168.123.4:81/EmbarquesApk/APK_SplitCamionetas/version.txt";
+        private static string INFO_FILE = "http://189.206.160.206:81/EmbarquesApk/APK_SplitCamionetas/version.txt";
         private int currentVersionCode;
         private string currentVersionName;
         private int latestVersionCode;
@@ -371,7 +373,8 @@ namespace SplitCamionetas
                     };
 
                     var folder = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath + "/SplitCamionetas";
-                    webClient.DownloadFileAsync(new System.Uri("http://192.168.123.4:81/EmbarquesApk/APK_SplitCamionetas/SplitCamionetas.apk"), folder + "/SplitCamionetas.apk");
+                    //webClient.DownloadFileAsync(new System.Uri("http://192.168.123.4:81/EmbarquesApk/APK_SplitCamionetas/SplitCamionetas.apk"), folder + "/SplitCamionetas.apk");
+                    webClient.DownloadFileAsync(new System.Uri("http://189.206.160.206:81/EmbarquesApk/APK_SplitCamionetas/SplitCamionetas.apk"), folder + "/SplitCamionetas.apk");
                 }
                 catch (System.IO.IOException e)
                 {

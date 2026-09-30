@@ -9,6 +9,7 @@ using Android.Views.InputMethods;
 using Android.Widget;
 using Java.Lang;
 using Java.Util;
+using Plugin.DeviceInfo;
 using SplitCamionetas.Modal;
 using SplitCamionetas.Models;
 using SQLite;
@@ -110,7 +111,8 @@ namespace SplitCamionetas
             Android.Telephony.TelephonyManager mTelephonyMgr;
             mTelephonyMgr = (Android.Telephony.TelephonyManager)GetSystemService(TelephonyService);
             //IMEI number  
-            imei = mTelephonyMgr.DeviceId;
+            //imei = mTelephonyMgr.DeviceId;
+            imei = getDeviceID();
 
 
             cvvehiculo = Intent.GetStringExtra("cvcamioneta");
@@ -3186,5 +3188,13 @@ namespace SplitCamionetas
             thisConnection.Close();
         }
 
+        private string getDeviceID()
+        {
+            Android.Telephony.TelephonyManager telephonyManager;
+            telephonyManager = (Android.Telephony.TelephonyManager)GetSystemService(TelephonyService);
+            //string deviceid=telephonyManager.DeviceId;
+            string deviceid = CrossDeviceInfo.Current.Id;
+            return deviceid;
+        }
     }
 }
