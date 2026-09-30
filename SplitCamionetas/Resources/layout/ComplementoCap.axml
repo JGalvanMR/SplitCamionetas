@@ -1,101 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="#111827">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#111827"
+    android:padding="16dp">
+
+	<!-- Datos Superiores (Split y Pedido) -->
 	<TextView
-		android:textColor="@android:color/white"
-		android:textSize="16sp"
-		android:text="SPLIT:"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/splitcantidadcom"
-		android:gravity="right"
-		android:singleLine="true" />
+        android:textColor="#9CA3AF"
+        android:textSize="14sp"
+        android:text="SPLIT:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:id="@+id/splitcantidadcom"
+        android:gravity="end"
+        android:singleLine="true" />
+
 	<TextView
-		android:textColor="@android:color/white"
-		android:textSize="16sp"
-		android:text="PEDIDO:"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/pedidoencapturacom"
-		android:gravity="right"
-		android:singleLine="true" />
+        android:textColor="#9CA3AF"
+        android:textSize="14sp"
+        android:text="PEDIDO:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:id="@+id/pedidoencapturacom"
+        android:gravity="end"
+        android:singleLine="true" />
+
+	<!-- Opciones de Captura (RadioGroup responsivo) -->
 	<RadioGroup
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp">
 		<RadioButton
-			android:textColor="@android:color/white"
-			android:textSize="16sp"
-			android:id="@+id/comradio_blanco"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:scaleX="0.9"
-			android:scaleY="0.9"
-			android:checked="true"
-			android:text="CAJA X CAJA" />
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:id="@+id/comradio_blanco"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="CAJA X CAJA" />
 		<RadioButton
-			android:textColor="@android:color/white"
-			android:textSize="16sp"
-			android:id="@+id/comradio_verde"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:scaleX="0.9"
-			android:scaleY="0.9"
-			android:text="TARIMA COMPLETA" />
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:id="@+id/comradio_verde"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="TARIMA COMPLETA" />
 	</RadioGroup>
+
+	<!-- Campo de Código / Folio -->
 	<TextView
-		android:textColor="@android:color/white"
-		android:textSize="16sp"
-		android:text="CODIGO:"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/textView12"
-		android:singleLine="true" />
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:text="CODIGO:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:id="@+id/textView12"
+        android:singleLine="true" />
+
 	<EditText
-		android:inputType="text"
-		android:singleLine="true"
-		android:maxLines="1"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/Foliocom"
-		android:imeOptions="actionDone" />
+        android:inputType="text"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginBottom="12dp"
+        android:background="#1F2937"
+        android:textColor="@android:color/white"
+        android:textColorHint="#6B7280"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:id="@+id/Foliocom"
+        android:imeOptions="actionDone" />
+
+	<!-- Botón Grabar -->
 	<Button
-		android:textColor="@android:color/white"
-		android:textSize="16sp"
-		android:text="Grabar"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/GuardarCapturadocom"
-		android:layout_marginTop="0.0dp" />
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="Grabar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#2563EB"
+        android:layout_marginBottom="12dp"
+        android:id="@+id/GuardarCapturadocom" />
+
+	<!-- Total capturado -->
 	<TextView
-		android:textColor="@android:color/white"
-		android:textSize="16sp"
-		android:text="000"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/totalcapturadocom" />
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="000"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:id="@+id/totalcapturadocom" />
+
+	<!-- Listado (GridView) -->
 	<GridView
-		android:minWidth="25px"
-		android:minHeight="25px"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:numColumns="1"
-		android:id="@+id/gvCtr2com"
-		android:layout_weight="1"
-		android:columnWidth="150dp" />
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:numColumns="1"
+        android:id="@+id/gvCtr2com"
+        android:columnWidth="150dp"
+        android:layout_marginBottom="8dp" />
+
+	<!-- CheckBox Eliminar Caja -->
 	<CheckBox
-		android:textColor="@android:color/white"
-		android:textSize="16sp"
-		android:text="Eliminar Caja"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/Eliminar" />
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:text="Eliminar Caja"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/Eliminar" />
+
 </LinearLayout>

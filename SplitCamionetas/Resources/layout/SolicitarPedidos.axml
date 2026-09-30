@@ -1,79 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="#111827">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#111827"
+    android:padding="16dp">
+
 	<TextView
-		android:textColor="@android:color/white"
-		android:textSize="16sp"
-		android:text="Small Text"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/usuario" />
+        android:textColor="#9CA3AF"
+        android:textSize="14sp"
+        android:text="Small Text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:id="@+id/usuario" />
+
 	<TextView
-		android:textColor="@android:color/white"
-		android:textSize="16sp"
-		android:text="Pedido:"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/textView2"
-		android:singleLine="true"
-		android:imeOptions="actionDone" />
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:text="Pedido:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:id="@+id/textView2"
+        android:singleLine="true"
+        android:imeOptions="actionDone" />
+
 	<EditText
-		android:textColor="@android:color/white"
-		android:inputType="number"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/agregarpedido" />
+        android:textColor="@android:color/white"
+        android:textColorHint="#6B7280"
+        android:inputType="number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:background="#1F2937"
+        android:padding="12dp"
+        android:id="@+id/agregarpedido" />
+
 	<TextView
-		android:textColor="@android:color/white"
-		android:textSize="16sp"
-		android:text="Listado de Pedidos Agregados:"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/textView3" />
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical">
-		<Spinner
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/pedidos"
-			android:layout_marginBottom="11.5dp"
-			android:popupBackground="#233150"
-			android:spinnerMode="dropdown"
-			android:foregroundTint="@android:color/white"
-			android:backgroundTint="@android:color/white"/>
-	</LinearLayout>
+        android:textColor="#9CA3AF"
+        android:textSize="14sp"
+        android:text="Listado de Pedidos Agregados:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:id="@+id/textView3" />
+
+	<Spinner
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginBottom="12dp"
+        android:id="@+id/pedidos"
+        android:background="#1F2937"
+        android:popupBackground="#1F2937"
+        android:spinnerMode="dropdown" />
+
 	<Button
-		android:textColor="@android:color/white"
-		android:textSize="16sp"
-		android:text="Capturar"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/button1"
-		android:layout_marginTop="0.0dp" />
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="Capturar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:backgroundTint="#2563EB"
+        android:layout_marginBottom="16dp"
+        android:id="@+id/button1" />
+
 	<TextView
-		android:textColor="@android:color/white"
-		android:textSize="16sp"
-		android:text="DETALLE DE PRODUCTO:"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/textView4" />
+        android:textColor="#9CA3AF"
+        android:textSize="14sp"
+        android:text="DETALLE DE PRODUCTO:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:id="@+id/textView4" />
+
 	<GridView
-		android:minWidth="25px"
-		android:minHeight="25px"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:numColumns="1"
-		android:id="@+id/gvCtrl"
-		android:layout_weight="1"
-		android:columnWidth="150dp" />
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="1"
+        android:id="@+id/gvCtrl"
+        android:layout_weight="1"
+        android:columnWidth="150dp" />
+
 </LinearLayout>

@@ -1,34 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="#111827">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#111827"
+    android:padding="16dp">
+
+	<!-- Título Principal -->
 	<TextView
-		android:textColor="@android:color/white"
-		android:text="Productos En Split"
-		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/textView1"
-		android:gravity="center" />
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:text="Productos En Split"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:id="@+id/textView1"
+        android:gravity="center" />
+
+	<!-- Listado (GridView) -->
 	<GridView
-		android:minWidth="25px"
-		android:minHeight="25px"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:numColumns="1"
-		android:id="@+id/gvCtrcapturasplit"
-		android:layout_weight="1"
-		android:columnWidth="150dp" />
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:numColumns="1"
+        android:id="@+id/gvCtrcapturasplit"
+        android:columnWidth="150dp"
+        android:layout_marginBottom="16dp" />
+
+	<!-- Botón de Cancelación -->
 	<Button
-		android:textColor="@android:color/white"
-		android:textSize="16sp"
-		android:text="Cancelar Split Completo"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/btnbclose"
-		android:layout_weight="0"
-		android:drawableLeft="@drawable/cerrar" />
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="Cancelar Split Completo"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#DC3545"
+        android:gravity="center"
+        android:drawableStart="@drawable/cerrar"
+        android:drawablePadding="10dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:id="@+id/btnbclose" />
+
 </LinearLayout>

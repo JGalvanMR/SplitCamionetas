@@ -1,82 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="#111827">
-	<ImageView
-		android:src="@drawable/logos"
-		android:layout_width="match_parent"
-		android:layout_height="106.5dp"
-		android:id="@+id/iVlogos" />
-	<ImageView
-		android:src="@drawable/logo_splitcamionetas"
-		android:layout_width="match_parent"
-		android:layout_height="106.5dp"
-		android:id="@+id/iVlogo" />
-	<TextView
-		android:textColor="@android:color/white"
-		android:text="Armado de Tarimas por Split"
-		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/tvlogin"
-		android:gravity="center" />
-	<TextView
-		android:textColor="@android:color/white"
-		android:textSize="16sp"
-		android:text="Responsable:"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/textView2" />
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical"/>
-	<Spinner
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/spinner2"
-		android:popupBackground="#233150"
-		android:spinnerMode="dropdown"
-		android:foregroundTint="@android:color/white"
-		android:backgroundTint="@android:color/white"/>
-	<TextView
-		android:textColor="@android:color/white"
-		android:textSize="16sp"
-		android:text="Vehiculo:"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/textView1" />
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#111827"
+    android:padding="20dp"
+    android:gravity="center_vertical">
 
-		<Spinner
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/spinner1"
-			android:popupBackground="#233150"
-			android:spinnerMode="dropdown"
-			android:foregroundTint="@android:color/white"
-			android:backgroundTint="@android:color/white"/>
-	</LinearLayout>
-	<Button
-		android:textColor="@android:color/white"
-		android:textSize="16sp"
-		android:text="Login"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/btnlogin" />
+	<ImageView
+        android:src="@drawable/logos"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:scaleType="fitCenter"
+        android:layout_marginBottom="12dp"
+        android:id="@+id/iVlogos" />
+
+	<ImageView
+        android:src="@drawable/logo_splitcamionetas"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:scaleType="fitCenter"
+        android:layout_marginBottom="24dp"
+        android:id="@+id/iVlogo" />
+
 	<TextView
-		android:text="Split Camionetas - Versión: 7.5"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:gravity="right"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/versinapp" />
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:text="Armado de Tarimas por Split"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:id="@+id/tvlogin"
+        android:gravity="center" />
+
+	<TextView
+        android:textColor="#9CA3AF"
+        android:textSize="14sp"
+        android:text="Responsable:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:id="@+id/textView2" />
+
+	<Spinner
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginBottom="16dp"
+        android:id="@+id/spinner2"
+        android:background="#1F2937"
+        android:popupBackground="#1F2937"
+        android:spinnerMode="dropdown" />
+
+	<TextView
+        android:textColor="#9CA3AF"
+        android:textSize="14sp"
+        android:text="Vehículo:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:id="@+id/textView1" />
+
+	<Spinner
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginBottom="24dp"
+        android:id="@+id/spinner1"
+        android:background="#1F2937"
+        android:popupBackground="#1F2937"
+        android:spinnerMode="dropdown" />
+
+	<Button
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="Login"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:backgroundTint="#2563EB"
+        android:layout_marginBottom="16dp"
+        android:id="@+id/btnlogin" />
+
+	<TextView
+        android:textColor="#6B7280"
+        android:textSize="12sp"
+        android:text="Split Camionetas - Versión: 7.5"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/versinapp" />
+
 </LinearLayout>
