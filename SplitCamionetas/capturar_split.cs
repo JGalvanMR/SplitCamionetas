@@ -1533,11 +1533,11 @@ namespace SplitCamionetas
                     AutoPed = "S";
                     Guardar.Enabled = true;
                     builder.Dismiss();
-                    if ((Guardar.Enabled == true) && (ValiFechacad == "N"))
+                    /*if ((Guardar.Enabled == true) && (ValiFechacad == "N"))
                     {
                         Guardar.Enabled = false;
                         fnShowCustomAlertDialogCancel();
-                    }
+                    }*/
                 }
 
             };
