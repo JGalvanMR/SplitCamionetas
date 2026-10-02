@@ -151,11 +151,11 @@ namespace SplitCamionetas
                 msj += "\nDesea Actualizar?";
                 //Crea ventana de alerta.
                 Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Actualizacion Disponible"));
+                alertDialog.SetTitle(Html.FromHtml("<font color='#B71C1C' size = 10>Actualizacion Disponible"));
                 alertDialog.SetIcon(Resource.Drawable.update);
                 alertDialog.SetMessage(Html.FromHtml("<font color='#000000' size = 10>" + msj + "</font>"));
-                alertDialog.SetPositiveButton(Html.FromHtml("<font face = 'Comic Sans MS, arial' color='#DF0101' size = '10'>Sí</font>"), SaveAction);
-                alertDialog.SetNegativeButton(Html.FromHtml("<font face = 'Comic Sans MS, arial' color='#DF0101' size = '10'>No</font>"), CancelaAction);
+                alertDialog.SetPositiveButton(Html.FromHtml("<font face = 'Comic Sans MS, arial' color='#B71C1C' size = '10'>Sí</font>"), SaveAction);
+                alertDialog.SetNegativeButton(Html.FromHtml("<font face = 'Comic Sans MS, arial' color='#B71C1C' size = '10'>No</font>"), CancelaAction);
                 alertDialog.SetCancelable(false);
                 alertDialog.Create();
                 alertDialog.Show();
@@ -277,9 +277,9 @@ namespace SplitCamionetas
             catch (JSONException e)
             {
                 Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                alertDialog.SetTitle(Html.FromHtml("<font color='#0068b3' size = 10>SE HA PRODUCIDO UNA EXCEPCION</font>"));
+                alertDialog.SetTitle(Html.FromHtml("<font color='#01579B' size = 10>SE HA PRODUCIDO UNA EXCEPCION</font>"));
                 alertDialog.SetIcon(Resource.Drawable.Info);
-                alertDialog.SetMessage(Html.FromHtml("<font color='#ed174f' size = 10>Ha habido un error con el JSON" + e + "</font>"));
+                alertDialog.SetMessage(Html.FromHtml("<font color='#B71C1C' size = 10>Ha habido un error con el JSON" + e + "</font>"));
                 alertDialog.SetNeutralButton("Ok", delegate { alertDialog.Dispose(); });
                 alertDialog.Show();
 
@@ -288,9 +288,9 @@ namespace SplitCamionetas
             catch (Android.Content.PM.PackageManager.NameNotFoundException e)
             {
                 Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                alertDialog.SetTitle(Html.FromHtml("<font color='#0068b3' size = 10>SE HA PRODUCIDO UNA EXCEPCION</font>"));
+                alertDialog.SetTitle(Html.FromHtml("<font color='#01579B' size = 10>SE HA PRODUCIDO UNA EXCEPCION</font>"));
                 alertDialog.SetIcon(Resource.Drawable.Info);
-                alertDialog.SetMessage(Html.FromHtml("<font color='#ed174f' size = 10>Ha habido un error con el packete :S" + e + "</font>"));
+                alertDialog.SetMessage(Html.FromHtml("<font color='#B71C1C' size = 10>Ha habido un error con el packete :S" + e + "</font>"));
                 alertDialog.SetNeutralButton("Ok", delegate { alertDialog.Dispose(); });
                 alertDialog.Show();
 
@@ -299,9 +299,9 @@ namespace SplitCamionetas
             catch (System.IO.IOException e)
             {
                 Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                alertDialog.SetTitle(Html.FromHtml("<font color='#0068b3' size = 10>SE HA PRODUCIDO UNA EXCEPCION</font>"));
+                alertDialog.SetTitle(Html.FromHtml("<font color='#01579B' size = 10>SE HA PRODUCIDO UNA EXCEPCION</font>"));
                 alertDialog.SetIcon(Resource.Drawable.Info);
-                alertDialog.SetMessage(Html.FromHtml("<font color='#ed174f' size = 10>Ha habido un error con la descarga" + e + "</font>"));
+                alertDialog.SetMessage(Html.FromHtml("<font color='#B71C1C' size = 10>Ha habido un error con la descarga" + e + "</font>"));
                 alertDialog.SetNeutralButton("Ok", delegate { alertDialog.Dispose(); });
                 alertDialog.Show();
 

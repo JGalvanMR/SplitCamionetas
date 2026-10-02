@@ -232,9 +232,9 @@ namespace SplitCamionetas
 
 
                 Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Error en el ultimo Guardado</font>"));
+                alertDialog.SetTitle(Html.FromHtml("<font color='#B71C1C' size = 10>Error en el ultimo Guardado</font>"));
                 alertDialog.SetIcon(Resource.Drawable.no);
-                alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>Ocurrio un error inesperado durante el ultimo proceso de guardado, Debe Cancelar el split generado del pedido:"+ captu.mensaje + " </font>"));
+                alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>Ocurrio un error inesperado durante el ultimo proceso de guardado, Debe Cancelar el split generado del pedido:"+ captu.mensaje + " </font>"));
                 alertDialog.SetCancelable(false);
                 alertDialog.SetNeutralButton("Ok", delegate
                 {
@@ -405,9 +405,9 @@ namespace SplitCamionetas
 
 
                     Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                    alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Informacion Almacenada</font>"));
+                    alertDialog.SetTitle(Html.FromHtml("<font color='#B71C1C' size = 10>Informacion Almacenada</font>"));
                     alertDialog.SetIcon(Resource.Drawable.exito);
-                    alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>Información Grabada Correctamente!!! </font>"));
+                    alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>Información Grabada Correctamente!!! </font>"));
                     alertDialog.SetCancelable(false);
                     alertDialog.SetNeutralButton("Ok", delegate
                     {
@@ -446,9 +446,9 @@ namespace SplitCamionetas
 
 
                     Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                    alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Error en el Guardado</font>"));
+                    alertDialog.SetTitle(Html.FromHtml("<font color='#B71C1C' size = 10>Error en el Guardado</font>"));
                     alertDialog.SetIcon(Resource.Drawable.no);
-                    alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>Ocurrio un error inesperado durante el guardado, Favor de cancelar el split</font>"));
+                    alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>Ocurrio un error inesperado durante el guardado, Favor de cancelar el split</font>"));
                     alertDialog.SetCancelable(false);
                     alertDialog.SetNeutralButton("Ok", delegate
                     {
@@ -661,9 +661,9 @@ namespace SplitCamionetas
                         else
                         {
                             Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                            alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Sin Productos Capturados</font>"));
+                            alertDialog.SetTitle(Html.FromHtml("<font color='#B71C1C' size = 10>Sin Productos Capturados</font>"));
                             alertDialog.SetIcon(Resource.Drawable.no);
-                            alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>No existen productos capturados para validar</font>"));
+                            alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>No existen productos capturados para validar</font>"));
                             alertDialog.SetCancelable(false);
                             alertDialog.SetNeutralButton("Ok", delegate
                             {
@@ -685,9 +685,9 @@ namespace SplitCamionetas
                         SendMail("jgalvan@mrlucky.com.mx", "Error generado en la validacion COMPLEMENTO SPLIT CAMIONETAS " + ex, "Error En la Validacion + " + dondegenera);
 
                         Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                        alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Error en la validaciòn</font>"));
+                        alertDialog.SetTitle(Html.FromHtml("<font color='#B71C1C' size = 10>Error en la validaciòn</font>"));
                         alertDialog.SetIcon(Resource.Drawable.no);
-                        alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>Ocurrio un error inesperado durante la validación, Favor de Validar nuevamente</font>"));
+                        alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>Ocurrio un error inesperado durante la validación, Favor de Validar nuevamente</font>"));
                         alertDialog.SetCancelable(false);
                         alertDialog.SetNeutralButton("Ok", delegate
                         {
@@ -774,9 +774,9 @@ namespace SplitCamionetas
                     if (captu.titulo.Trim() == "Existe un folio anterior disponible")
                     {
                         Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                        alertDialog.SetTitle(Html.FromHtml("<font color='#FCEC70' size = 10>" + captu.titulo.ToString() + "</font>"));
+                        alertDialog.SetTitle(Html.FromHtml("<font color='#E65100' size = 10>" + captu.titulo.ToString() + "</font>"));
                         alertDialog.SetIcon(Resource.Drawable.warning);
-                        alertDialog.SetMessage(Html.FromHtml("<font color='#E0F1FA' size = 10>" + captu.mensaje.ToString() + "</font>"));
+                        alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>" + captu.mensaje.ToString() + "</font>"));
                         alertDialog.SetCancelable(false);
                         alertDialog.SetNeutralButton("Ok", delegate
                         {
@@ -790,9 +790,9 @@ namespace SplitCamionetas
                     else if (captu.titulo.Trim() == "Etiqueta ya capturada" || captu.titulo.Trim() == "Etiqueta ya capturada En PreSplit")
                     {
                         Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                        alertDialog.SetTitle(Html.FromHtml("<font color='#62D9FF' size = 10>" + captu.titulo.ToString() + "</font>"));
+                        alertDialog.SetTitle(Html.FromHtml("<font color='#01579B' size = 10>" + captu.titulo.ToString() + "</font>"));
                         alertDialog.SetIcon(Resource.Drawable.Info);
-                        alertDialog.SetMessage(Html.FromHtml("<font color='#88D0FF' size = 10>" + captu.mensaje.ToString() + "</font>"));
+                        alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>" + captu.mensaje.ToString() + "</font>"));
                         alertDialog.SetCancelable(false);
                         alertDialog.SetNeutralButton("Ok", delegate
                         {
@@ -806,9 +806,9 @@ namespace SplitCamionetas
                     else if (captu.titulo.Trim() == "Error Surtido Mayor al Pedido")
                     {
                         Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                        alertDialog.SetTitle(Html.FromHtml("<font color='#27FF00' size = 10>" + captu.titulo.ToString() + "</font>"));
+                        alertDialog.SetTitle(Html.FromHtml("<font color='#1B5E20' size = 10>" + captu.titulo.ToString() + "</font>"));
                         alertDialog.SetIcon(Resource.Drawable.radiactivo);
-                        alertDialog.SetMessage(Html.FromHtml("<font color='#34FF4A' size = 10>" + captu.mensaje.ToString() + "</font>"));
+                        alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>" + captu.mensaje.ToString() + "</font>"));
                         alertDialog.SetCancelable(false);
                         alertDialog.SetNeutralButton("Ok", delegate
                         {
@@ -821,9 +821,9 @@ namespace SplitCamionetas
                     else if (captu.titulo.Trim() == "Tarima Surtida Completamente")
                     {
                         Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                        alertDialog.SetTitle(Html.FromHtml("<font color='#FABF57' size = 10>" + captu.titulo.ToString() + "</font>"));
+                        alertDialog.SetTitle(Html.FromHtml("<font color='#E65100' size = 10>" + captu.titulo.ToString() + "</font>"));
                         alertDialog.SetIcon(Resource.Drawable.no);
-                        alertDialog.SetMessage(Html.FromHtml("<font color='##FECB82' size = 10>" + captu.mensaje.ToString() + "</font>"));
+                        alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>" + captu.mensaje.ToString() + "</font>"));
                         alertDialog.SetCancelable(false);
                         alertDialog.SetNeutralButton("Ok", delegate
                         {
@@ -837,9 +837,9 @@ namespace SplitCamionetas
                     else
                     {
                         Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                        alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>" + captu.titulo.ToString() + "</font>"));
+                        alertDialog.SetTitle(Html.FromHtml("<font color='#B71C1C' size = 10>" + captu.titulo.ToString() + "</font>"));
                         alertDialog.SetIcon(Resource.Drawable.no);
-                        alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>" + captu.mensaje.ToString() + "</font>"));
+                        alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>" + captu.mensaje.ToString() + "</font>"));
                         alertDialog.SetCancelable(false);
                         alertDialog.SetNeutralButton("Ok", delegate
                         {
@@ -1007,9 +1007,9 @@ namespace SplitCamionetas
                 catch (System.Exception ex)
                 {
                     Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                    alertDialog.SetTitle(Html.FromHtml("<font color='#62D9FF' size = 10>Error en la estructura de Etiqueta</font>"));
+                    alertDialog.SetTitle(Html.FromHtml("<font color='#01579B' size = 10>Error en la estructura de Etiqueta</font>"));
                     alertDialog.SetIcon(Resource.Drawable.Info);
-                    alertDialog.SetMessage(Html.FromHtml("<font color='#88D0FF' size = 10>La etiqueta del producto " + mcod + " - " + NOmprod + " Recibo: " + mfol + " / Tarima " + mtar + " / Caja: " + mcaj + " contiene un error en la tarima, recibo o folio, favor de informar al supervisor, retirar y reetiquetar la caja y leer  la nueva etiqueta</font>"));
+                    alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>La etiqueta del producto " + mcod + " - " + NOmprod + " Recibo: " + mfol + " / Tarima " + mtar + " / Caja: " + mcaj + " contiene un error en la tarima, recibo o folio, favor de informar al supervisor, retirar y reetiquetar la caja y leer  la nueva etiqueta</font>"));
                     alertDialog.SetCancelable(false);
                     alertDialog.SetNeutralButton("Ok", delegate
                     {
@@ -1936,9 +1936,9 @@ namespace SplitCamionetas
             if (mconcen == "2")
             {
                 Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Modo concentrado Activado</font>"));
+                alertDialog.SetTitle(Html.FromHtml("<font color='#B71C1C' size = 10>Modo concentrado Activado</font>"));
                 alertDialog.SetIcon(Resource.Drawable.no);
-                alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>Esta consultando el concentrado no se puede capturar codigo. </font>"));
+                alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>Esta consultando el concentrado no se puede capturar codigo. </font>"));
                 alertDialog.SetCancelable(false);
                 alertDialog.SetNeutralButton("Ok", delegate
                 {
@@ -2349,9 +2349,9 @@ namespace SplitCamionetas
                 valorfinal = foliocaptura.Text;
                 //iMPRESION DE MENSAJE QUE INDICARA CUANTO DE CADA TARIMA SE LOGRO CARGAR Y SIMULAR
                 Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                alertDialog.SetTitle(Html.FromHtml("<font color='#55F721' size = 10>LECTURA POR TARIMA</font>"));
+                alertDialog.SetTitle(Html.FromHtml("<font color='#1B5E20' size = 10>LECTURA POR TARIMA</font>"));
                 alertDialog.SetIcon(Resource.Drawable.Info);
-                alertDialog.SetMessage(Html.FromHtml("<font color='#9FFA7A' size = 10>Se han Capturado " + total_caja_verde + " Cajas,  Del Folio " + mfol + " De la tarima " + mtar + " Del Producto " + traenom(mcod.ToString().Trim()) + "</font>"));
+                alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>Se han Capturado " + total_caja_verde + " Cajas,  Del Folio " + mfol + " De la tarima " + mtar + " Del Producto " + traenom(mcod.ToString().Trim()) + "</font>"));
                 alertDialog.SetNeutralButton("Ok", delegate
                 {
                     alertDialog.Dispose();
@@ -2362,9 +2362,9 @@ namespace SplitCamionetas
             else
             {
                 Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                alertDialog.SetTitle(Html.FromHtml("<font color='#55F721' size = 10>EXISTENCIA NO DISPONIBLE</font>"));
+                alertDialog.SetTitle(Html.FromHtml("<font color='#1B5E20' size = 10>EXISTENCIA NO DISPONIBLE</font>"));
                 alertDialog.SetIcon(Resource.Drawable.Info);
-                alertDialog.SetMessage(Html.FromHtml("<font color='#9FFA7A' size = 10>La Tarima Actual No Cuenta con Existencia Disponible, Favor de Depurar los folios correspondientes y volver a leer</font>"));
+                alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>La Tarima Actual No Cuenta con Existencia Disponible, Favor de Depurar los folios correspondientes y volver a leer</font>"));
                 alertDialog.SetNeutralButton("Ok", delegate
                 {
                     alertDialog.Dispose();
@@ -2533,9 +2533,9 @@ namespace SplitCamionetas
             if (mtip == "" || mfol == "" || mcod == "" || mtar == "")
             {
                 Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                alertDialog.SetTitle(Html.FromHtml("<font color='#55F721' size = 10>EXISTENCIA NO DISPONIBLE</font>"));
+                alertDialog.SetTitle(Html.FromHtml("<font color='#1B5E20' size = 10>EXISTENCIA NO DISPONIBLE</font>"));
                 alertDialog.SetIcon(Resource.Drawable.nota);
-                alertDialog.SetMessage(Html.FromHtml("<font color='#9FFA7A' size = 10>La Tarima Actual No Cuenta con Existencia Disponible, Favor de Depurar los folios correspondientes y volver a leer</font>"));
+                alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>La Tarima Actual No Cuenta con Existencia Disponible, Favor de Depurar los folios correspondientes y volver a leer</font>"));
                 alertDialog.SetNeutralButton("Ok", delegate
                 {
                     alertDialog.Dispose();
@@ -2712,9 +2712,9 @@ namespace SplitCamionetas
                 valorfinal = foliocaptura.Text;
                 //iMPRESION DE MENSAJE QUE INDICARA CUANTO DE CADA TARIMA SE LOGRO CARGAR Y SIMULAR
                 Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                alertDialog.SetTitle(Html.FromHtml("<font color='#55F721' size = 10>LECTURA POR TARIMA</font>"));
+                alertDialog.SetTitle(Html.FromHtml("<font color='#1B5E20' size = 10>LECTURA POR TARIMA</font>"));
                 alertDialog.SetIcon(Resource.Drawable.nota);
-                alertDialog.SetMessage(Html.FromHtml("<font color='#9FFA7A' size = 10>Se han Capturado " + total_caja_verde + " Cajas,  Del Folio " + mfol + " De la tarima " + mtar + " Del Producto " + traenom(mcod.ToString().Trim()) + "</font>"));
+                alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>Se han Capturado " + total_caja_verde + " Cajas,  Del Folio " + mfol + " De la tarima " + mtar + " Del Producto " + traenom(mcod.ToString().Trim()) + "</font>"));
                 alertDialog.SetNeutralButton("Ok", delegate
                 {
                     alertDialog.Dispose();
@@ -2724,9 +2724,9 @@ namespace SplitCamionetas
             else
             {
                 Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                alertDialog.SetTitle(Html.FromHtml("<font color='#55F721' size = 10>EXISTENCIA NO DISPONIBLE</font>"));
+                alertDialog.SetTitle(Html.FromHtml("<font color='#1B5E20' size = 10>EXISTENCIA NO DISPONIBLE</font>"));
                 alertDialog.SetIcon(Resource.Drawable.nota);
-                alertDialog.SetMessage(Html.FromHtml("<font color='#9FFA7A' size = 10>La Tarima Actual No Cuenta con Existencia Disponible, Favor de Depurar los folios correspondientes y volver a leer</font>"));
+                alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>La Tarima Actual No Cuenta con Existencia Disponible, Favor de Depurar los folios correspondientes y volver a leer</font>"));
                 alertDialog.SetNeutralButton("Ok", delegate
                 {
                     alertDialog.Dispose();

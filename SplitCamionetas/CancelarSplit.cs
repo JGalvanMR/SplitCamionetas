@@ -60,10 +60,10 @@ namespace SplitCamionetas
                     if (resuvalped == 2)
                     {
                         Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                        alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Pedido ya Cerrado</font>"));
+                        alertDialog.SetTitle(Html.FromHtml("<font color='#B71C1C' size = 10>Pedido ya Cerrado</font>"));
                         alertDialog.SetIcon(Resource.Drawable.no);
                         alertDialog.SetCancelable(false);
-                        alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>El pedido : " + pedidocan.Text.Trim() + " ya ha sido capturado y Cerrado</font>"));
+                        alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>El pedido : " + pedidocan.Text.Trim() + " ya ha sido capturado y Cerrado</font>"));
                         alertDialog.SetNeutralButton("Ok", delegate
                         {
                             db.Query<Mensajes>("delete from  [Mensajes] Where titulo = 'Error Al Guardar' AND mensaje = '" + pedidocan.Text.Trim() + "'");
@@ -77,10 +77,10 @@ namespace SplitCamionetas
                     else if (resuvalped == 3)
                     {
                         Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                        alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Factura No Es De Camionetas</font>"));
+                        alertDialog.SetTitle(Html.FromHtml("<font color='#B71C1C' size = 10>Factura No Es De Camionetas</font>"));
                         alertDialog.SetIcon(Resource.Drawable.no);
                         alertDialog.SetCancelable(false);
-                        alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>La Factura: " + pedidocan.Text.Trim() + " No Corresponde a Sistema Split Camionetas</font>"));
+                        alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>La Factura: " + pedidocan.Text.Trim() + " No Corresponde a Sistema Split Camionetas</font>"));
                         alertDialog.SetNeutralButton("Ok", delegate
                         {
                             alertDialog.Dispose();
@@ -93,10 +93,10 @@ namespace SplitCamionetas
                     else if (resuvalped == 4)
                     {
                         Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                        alertDialog.SetTitle(Html.FromHtml("<font color='#FA993E' size = 10>Pedido Cancelado</font>"));
+                        alertDialog.SetTitle(Html.FromHtml("<font color='#E65100' size = 10>Pedido Cancelado</font>"));
                         alertDialog.SetIcon(Resource.Drawable.warning);
                         alertDialog.SetCancelable(false);
-                        alertDialog.SetMessage(Html.FromHtml("<font color='#FAC73E' size = 10>El pedido: " + pedidocan.Text.Trim() + " Esta Cancelado y no se puede cargar</font>"));
+                        alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>El pedido: " + pedidocan.Text.Trim() + " Esta Cancelado y no se puede cargar</font>"));
                         alertDialog.SetNeutralButton("Ok", delegate
                         {
                             alertDialog.Dispose();
@@ -110,10 +110,10 @@ namespace SplitCamionetas
                     else if (resuvalped == 5)
                     {
                         Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                        alertDialog.SetTitle(Html.FromHtml("<font color='#FA993E' size = 10>Pedido No Es De Camionetas</font>"));
+                        alertDialog.SetTitle(Html.FromHtml("<font color='#E65100' size = 10>Pedido No Es De Camionetas</font>"));
                         alertDialog.SetIcon(Resource.Drawable.warning);
                         alertDialog.SetCancelable(false);
-                        alertDialog.SetMessage(Html.FromHtml("<font color='#FAC73E' size = 10>El pedido: " + pedidocan.Text.Trim() + " No Corresponde a Sistema Split Camionetas</font>"));
+                        alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>El pedido: " + pedidocan.Text.Trim() + " No Corresponde a Sistema Split Camionetas</font>"));
                         alertDialog.SetNeutralButton("Ok", delegate
                         {
                             alertDialog.Dispose();
@@ -262,11 +262,11 @@ namespace SplitCamionetas
             pedidocancelar = pedidocan.Text.Trim();
 
             Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-            alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Cancelar Split</font>"));
+            alertDialog.SetTitle(Html.FromHtml("<font color='#B71C1C' size = 10>Cancelar Split</font>"));
             alertDialog.SetIcon(Resource.Drawable.question);
             alertDialog.SetMessage(Html.FromHtml("<font color='#000000' size = 10>¿Desea Cancelar el Splir Numero " + split + "?</font>"));
-            alertDialog.SetPositiveButton(Html.FromHtml("<font face = 'Comic Sans MS, arial' color='#DF0101' size = '10'>Sí</font>"), SaveAction);
-            alertDialog.SetNegativeButton(Html.FromHtml("<font face = 'Comic Sans MS, arial' color='#DF0101' size = '10'>No</font>"), CancelaAction);
+            alertDialog.SetPositiveButton(Html.FromHtml("<font face = 'Comic Sans MS, arial' color='#B71C1C' size = '10'>Sí</font>"), SaveAction);
+            alertDialog.SetNegativeButton(Html.FromHtml("<font face = 'Comic Sans MS, arial' color='#B71C1C' size = '10'>No</font>"), CancelaAction);
             alertDialog.Create();
             alertDialog.Show();
         }
@@ -331,9 +331,9 @@ namespace SplitCamionetas
 
 
             Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-            alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Split Cancelado</font>"));
+            alertDialog.SetTitle(Html.FromHtml("<font color='#B71C1C' size = 10>Split Cancelado</font>"));
             alertDialog.SetIcon(Resource.Drawable.exito);
-            alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>Split Cancelado Correctamente!!! </font>"));
+            alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>Split Cancelado Correctamente!!! </font>"));
             alertDialog.SetCancelable(false);
             alertDialog.SetNeutralButton("Ok", delegate
             {
@@ -407,10 +407,10 @@ namespace SplitCamionetas
 
 
                     Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                    alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Pedido Sin Split/font>"));
+                    alertDialog.SetTitle(Html.FromHtml("<font color='#B71C1C' size = 10>Pedido Sin Split/font>"));
                     alertDialog.SetIcon(Resource.Drawable.no);
                     alertDialog.SetCancelable(false);
-                    alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>El pedido: " + pedidocan.Text.Trim() + " No cuenta con split disponible</font>"));
+                    alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>El pedido: " + pedidocan.Text.Trim() + " No cuenta con split disponible</font>"));
                     alertDialog.SetNeutralButton("Ok", delegate
                     {
                         alertDialog.Dispose();
@@ -426,10 +426,10 @@ namespace SplitCamionetas
 
 
                     Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                    alertDialog.SetTitle(Html.FromHtml("<font color='#A6FF34' size = 10>Etiquetas Liberadas/font>"));
+                    alertDialog.SetTitle(Html.FromHtml("<font color='#1B5E20' size = 10>Etiquetas Liberadas/font>"));
                     alertDialog.SetIcon(Resource.Drawable.no);
                     alertDialog.SetCancelable(false);
-                    alertDialog.SetMessage(Html.FromHtml("<font color='#89FF79' size = 10>Las Etiquetas del pedido: " + pedidocan.Text.Trim() + ", Han Sido Liberadas</font>"));
+                    alertDialog.SetMessage(Html.FromHtml("<font color='#212121' size = 10>Las Etiquetas del pedido: " + pedidocan.Text.Trim() + ", Han Sido Liberadas</font>"));
                     alertDialog.SetNeutralButton("Ok", delegate
                     {
                         alertDialog.Dispose();
