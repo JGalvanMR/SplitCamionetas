@@ -75,7 +75,8 @@ namespace SplitCamionetas
         EditText foliocaptura;
         TextView total;
         Button Guardar;
-
+        TextView pedidoencaptura;
+        TextView nosplit;
         Int32 TotCaj;
 
 
@@ -146,6 +147,15 @@ namespace SplitCamionetas
             DataSet ds = new DataSet();
             da.Fill(ds, "CatProd");
             CatProd = ds.Tables["CatProd"];
+
+            //Traer numero de split
+            var quex = db.Table<Pedidos>();
+            foreach (var captu in quex)
+            {
+                nosplit.Text = "Split Numero: " + NoSplit(captu.folio.ToString());
+                pedidoencaptura.Text = "Pedido Actual: " + captu.folio.ToString();
+            }
+
             thisConnection.Close();
 
             //consulta de Folio de Campo

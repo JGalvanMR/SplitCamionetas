@@ -43,7 +43,11 @@ namespace SplitCamionetas
         ArrayAdapter<String> comboAdapter;
         String[] strFrutas;
 
-
+        // Colores semánticos de alto contraste (texto oscuro sobre fondo claro)
+        const string COLOR_ERROR_TITULO = "#B71C1C"; // Rojo oscuro
+        const string COLOR_WARN_TITULO = "#E65100"; // Naranja oscuro
+        const string COLOR_INFO_TITULO = "#00695C"; // Verde azulado oscuro
+        const string COLOR_MENSAJE = "#212121"; // Gris casi negro
 
         //traer los datos e id de cada uno de los elementos de la vista
         EditText pedido;
@@ -51,16 +55,12 @@ namespace SplitCamionetas
         Spinner Pedidos;
         Button capturar;
 
-
-
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             string contenido = "";
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.SolicitarPedidos);
             LoadConnection();
-
 
             //Declaracion de los id de cada elemento
             pedido = FindViewById<EditText>(Resource.Id.agregarpedido);
@@ -79,15 +79,12 @@ namespace SplitCamionetas
             TextView usuario = FindViewById<TextView>(Resource.Id.usuario);
             usuario.Text = responsable.Trim() + " - " + cvvehiculo.Trim();
 
-
             //*** Buscar Pedidos si se cerro mal el programa*************************************************************
             int cantidad_spinnere = 0;
             var queryinicial = db.Query<Pedidos>("SELECT DISTINCT folio FROM [Pedidos]");
 
-
             foreach (var captu1 in queryinicial)
             {
-
                 if (valida_pedido(pedido.Text.Trim()) != 0)
                 {
                     db.Query<Pedidos>("delete from  [Pedidos]");
@@ -118,7 +115,6 @@ namespace SplitCamionetas
                     x = x + 1;
                 }
 
-
                 Collections.AddAll(listaFrutas, strFrutas);
                 comboAdapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem, strFrutas);
                 spinner1.Adapter = comboAdapter;
@@ -127,33 +123,24 @@ namespace SplitCamionetas
                 spinner1.Enabled = true;
             }
 
-
-
             //Termina busqueda de pedidos *********************************************************************************
-
-
-
 
             pedido.EditorAction += (sender, e) =>
             {
-
                 if (e.ActionId == ImeAction.Done || e.ActionId == ImeAction.Next)
                 {
-
                     string hay = "N";
                     string Cadena = "";
                     if (mOp == "C")
                     {
-
                         List<FlimStarInfo> lstFlimStar = ConsPed(pedido.Text.Trim());
                         var gvObject = FindViewById<GridView>(Resource.Id.gvCtrl);
                         gvObject.Adapter = new myGVItemAdapter(this, lstFlimStar);
-                        gvObject.ItemClick += new EventHandler<AdapterView.ItemClickEventArgs>(OnGridView_ItemClicked); //detalle_pedido
+                        gvObject.ItemClick += new EventHandler<AdapterView.ItemClickEventArgs>(OnGridView_ItemClicked);
                         return;
                     }
                     else
                     {
-
                         var queryqe = db.Table<Pedidos>();
                         foreach (var captu in queryqe)
                         {
@@ -161,10 +148,10 @@ namespace SplitCamionetas
                             {
                                 hay = "S";
                                 Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                                alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Pedido ya agregado para captura</font>"));
+                                alertDialog.SetTitle(Html.FromHtml("<font color='" + COLOR_ERROR_TITULO + "'>Pedido ya agregado para captura</font>"));
                                 alertDialog.SetIcon(Resource.Drawable.no);
                                 alertDialog.SetCancelable(false);
-                                alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>El pedido : " + folio + " ya se agrego para capturar</font>"));
+                                alertDialog.SetMessage(Html.FromHtml("<font color='" + COLOR_MENSAJE + "'>El pedido : " + folio + " ya se agrego para capturar</font>"));
                                 alertDialog.SetNeutralButton("Ok", delegate
                                 {
                                     alertDialog.Dispose();
@@ -181,10 +168,10 @@ namespace SplitCamionetas
                         if (resuvalped == 1)
                         {
                             Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                            alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Pedido ya capturado</font>"));
+                            alertDialog.SetTitle(Html.FromHtml("<font color='" + COLOR_ERROR_TITULO + "'>Pedido ya capturado</font>"));
                             alertDialog.SetIcon(Resource.Drawable.no);
                             alertDialog.SetCancelable(false);
-                            alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>El pedido : " + folio + " ya ha sido capturado</font>"));
+                            alertDialog.SetMessage(Html.FromHtml("<font color='" + COLOR_MENSAJE + "'>El pedido : " + folio + " ya ha sido capturado</font>"));
                             alertDialog.SetNeutralButton("Ok", delegate
                             {
                                 alertDialog.Dispose();
@@ -192,16 +179,14 @@ namespace SplitCamionetas
                             alertDialog.Show();
                             pedido.Text = "";
                             pedido.RequestFocus();
-                            //return;
-
                         }
                         else if (resuvalped == 2)
                         {
                             Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                            alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Pedido ya Cerrado</font>"));
+                            alertDialog.SetTitle(Html.FromHtml("<font color='" + COLOR_ERROR_TITULO + "'>Pedido ya Cerrado</font>"));
                             alertDialog.SetIcon(Resource.Drawable.no);
                             alertDialog.SetCancelable(false);
-                            alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>El pedido : " + folio + " ya ha sido capturado y Cerrado</font>"));
+                            alertDialog.SetMessage(Html.FromHtml("<font color='" + COLOR_MENSAJE + "'>El pedido : " + folio + " ya ha sido capturado y Cerrado</font>"));
                             alertDialog.SetNeutralButton("Ok", delegate
                             {
                                 alertDialog.Dispose();
@@ -214,10 +199,10 @@ namespace SplitCamionetas
                         else if (resuvalped == 3)
                         {
                             Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                            alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Factura No Es De Camionetas</font>"));
+                            alertDialog.SetTitle(Html.FromHtml("<font color='" + COLOR_ERROR_TITULO + "'>Factura No Es De Camionetas</font>"));
                             alertDialog.SetIcon(Resource.Drawable.no);
                             alertDialog.SetCancelable(false);
-                            alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>La Factura: " + folio + " No Corresponde a Sistema Split Camionetas</font>"));
+                            alertDialog.SetMessage(Html.FromHtml("<font color='" + COLOR_MENSAJE + "'>La Factura: " + folio + " No Corresponde a Sistema Split Camionetas</font>"));
                             alertDialog.SetNeutralButton("Ok", delegate
                             {
                                 alertDialog.Dispose();
@@ -230,10 +215,10 @@ namespace SplitCamionetas
                         else if (resuvalped == 4)
                         {
                             Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                            alertDialog.SetTitle(Html.FromHtml("<font color='#FA993E' size = 10>Pedido Cancelado</font>"));
+                            alertDialog.SetTitle(Html.FromHtml("<font color='" + COLOR_WARN_TITULO + "'>Pedido Cancelado</font>"));
                             alertDialog.SetIcon(Resource.Drawable.warning);
                             alertDialog.SetCancelable(false);
-                            alertDialog.SetMessage(Html.FromHtml("<font color='#FAC73E' size = 10>El pedido: " + folio + " Esta Cancelado y no se puede cargar</font>"));
+                            alertDialog.SetMessage(Html.FromHtml("<font color='" + COLOR_MENSAJE + "'>El pedido: " + folio + " Esta Cancelado y no se puede cargar</font>"));
                             alertDialog.SetNeutralButton("Ok", delegate
                             {
                                 alertDialog.Dispose();
@@ -242,15 +227,14 @@ namespace SplitCamionetas
                             pedido.Text = "";
                             pedido.RequestFocus();
                             return;
-
                         }
                         else if (resuvalped == 5)
                         {
                             Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                            alertDialog.SetTitle(Html.FromHtml("<font color='#FA993E' size = 10>Pedido No Es De Camionetas</font>"));
+                            alertDialog.SetTitle(Html.FromHtml("<font color='" + COLOR_WARN_TITULO + "'>Pedido No Es De Camionetas</font>"));
                             alertDialog.SetIcon(Resource.Drawable.warning);
                             alertDialog.SetCancelable(false);
-                            alertDialog.SetMessage(Html.FromHtml("<font color='#FAC73E' size = 10>El pedido: " + folio + " No Corresponde a Sistema Split Camionetas</font>"));
+                            alertDialog.SetMessage(Html.FromHtml("<font color='" + COLOR_MENSAJE + "'>El pedido: " + folio + " No Corresponde a Sistema Split Camionetas</font>"));
                             alertDialog.SetNeutralButton("Ok", delegate
                             {
                                 alertDialog.Dispose();
@@ -259,15 +243,14 @@ namespace SplitCamionetas
                             pedido.Text = "";
                             pedido.RequestFocus();
                             return;
-
                         }
                         else if (resuvalped == 6)
                         {
                             Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                            alertDialog.SetTitle(Html.FromHtml("<font color='#FA993E' size = 10>Pedido No Asignado A " + cvvehiculo.Trim() + "</font>"));
+                            alertDialog.SetTitle(Html.FromHtml("<font color='" + COLOR_WARN_TITULO + "'>Pedido No Asignado A " + cvvehiculo.Trim() + "</font>"));
                             alertDialog.SetIcon(Resource.Drawable.warning);
                             alertDialog.SetCancelable(false);
-                            alertDialog.SetMessage(Html.FromHtml("<font color='#FAC73E' size = 10>El pedido: " + folio + " No se puede Cargar a esta camioneta porque la orden esta asignada a otra</font>"));
+                            alertDialog.SetMessage(Html.FromHtml("<font color='" + COLOR_MENSAJE + "'>El pedido: " + folio + " No se puede Cargar a esta camioneta porque la orden esta asignada a otra</font>"));
                             alertDialog.SetNeutralButton("Ok", delegate
                             {
                                 alertDialog.Dispose();
@@ -276,15 +259,14 @@ namespace SplitCamionetas
                             pedido.Text = "";
                             pedido.RequestFocus();
                             return;
-
                         }
                         else if (resuvalped == 7)
                         {
                             Android.App.AlertDialog.Builder alertDialogx = new Android.App.AlertDialog.Builder(this);
-                            alertDialogx.SetTitle(Html.FromHtml("<font color='#FA993E' size = 10>Pedido Con Split</font>"));
+                            alertDialogx.SetTitle(Html.FromHtml("<font color='" + COLOR_WARN_TITULO + "'>Pedido Con Split</font>"));
                             alertDialogx.SetIcon(Resource.Drawable.warning);
                             alertDialogx.SetCancelable(false);
-                            alertDialogx.SetMessage(Html.FromHtml("<font color='#FAC73E' size = 10>El pedido: " + pedido.Text.Trim() + " No se puede Cargar a esta camioneta porque la orden tiene un split asignado a Otra, Si desea Puede Cancelar el Split Previo e intentar de nuevo</font>"));
+                            alertDialogx.SetMessage(Html.FromHtml("<font color='" + COLOR_MENSAJE + "'>El pedido: " + pedido.Text.Trim() + " No se puede Cargar a esta camioneta porque la orden tiene un split asignado a Otra, Si desea Puede Cancelar el Split Previo e intentar de nuevo</font>"));
                             alertDialogx.SetNeutralButton("Ok", delegate
                             {
                                 alertDialogx.Dispose();
@@ -293,7 +275,6 @@ namespace SplitCamionetas
                             pedido.Text = "";
                             pedido.RequestFocus();
                             return;
-
                         }
 
                         if (hay == "N")
@@ -311,10 +292,10 @@ namespace SplitCamionetas
                             if (Ped.Rows.Count == 0)
                             {
                                 Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                                alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Pedido Inexistente</font>"));
+                                alertDialog.SetTitle(Html.FromHtml("<font color='" + COLOR_ERROR_TITULO + "'>Pedido Inexistente</font>"));
                                 alertDialog.SetIcon(Resource.Drawable.no);
                                 alertDialog.SetCancelable(false);
-                                alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>El pedido: " + pedido.Text.Trim() + " No Existe o No se ha dado de alta</font>"));
+                                alertDialog.SetMessage(Html.FromHtml("<font color='" + COLOR_MENSAJE + "'>El pedido: " + pedido.Text.Trim() + " No Existe o No se ha dado de alta</font>"));
                                 alertDialog.SetNeutralButton("Ok", delegate
                                 {
                                     alertDialog.Dispose();
@@ -325,7 +306,6 @@ namespace SplitCamionetas
                                 return;
                             }
 
-
                             foreach (DataRow row in Ped.Rows)
                             {
                                 string mnom = row["prod_nombre"].ToString().Trim();
@@ -334,7 +314,6 @@ namespace SplitCamionetas
                                 Pedidos Pedidoscapturados = new Pedidos { folio = row["pdn_folio"].ToString().Trim(), prod_clave = row["prod_clave"].ToString().Trim(), nombre = mnom, pedido = Convert.ToInt32(row["pdn_num_unidades"]), surtido = 0 };
                                 //Registra en la base de datos SQLite
                                 db.Insert(Pedidoscapturados);
-
 
                                 var encontrado = 0;
                                 var query = db.Table<ConPedidos>();
@@ -350,11 +329,9 @@ namespace SplitCamionetas
 
                                 if (encontrado == 0)
                                 {
-
                                     ConPedidos consecutivo = new ConPedidos { prod_clave = row["prod_clave"].ToString().Trim(), nombre = mnom, pedido = Convert.ToInt32(row["pdn_num_unidades"]), surtido = 0 };
                                     //Registra en la base de datos SQLite
                                     db.Insert(consecutivo);
-
                                 }
 
                                 hay = "S";
@@ -368,7 +345,6 @@ namespace SplitCamionetas
                                     cantidad_spinner = cantidad_spinner + 1;
                                 }
 
-
                                 var query = db.Query<Pedidos>("SELECT DISTINCT folio FROM [Pedidos]");
                                 Spinner spinner = FindViewById<Spinner>(Resource.Id.pedidos);
                                 System.Collections.ArrayList listaFrutas = new System.Collections.ArrayList();
@@ -380,11 +356,9 @@ namespace SplitCamionetas
 
                                 foreach (var captu in query)
                                 {
-
                                     strFrutas[x] = captu.folio.ToString();
                                     x = x + 1;
                                 }
-
 
                                 Collections.AddAll(listaFrutas, strFrutas);
                                 comboAdapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem, strFrutas);
@@ -396,30 +370,21 @@ namespace SplitCamionetas
                                 Toast.MakeText(this, "Pedido agregado Correctamente", ToastLength.Short).Show();
                             }
                             thisConnection.Close();
-
                         }
                         else
                         {
                             e.Handled = false;
                         }
-
                     }
 
                     LoadConnection();
-
-
                 }
             };
-
-
-
         }
 
         private void OnGridView_ItemClicked(object sender, AdapterView.ItemClickEventArgs e)
         {
-
         }
-
 
         public int valida_pedido(string validar)
         {
@@ -431,7 +396,6 @@ namespace SplitCamionetas
             thisConnection.Close();
             if (Emb.Trim().Length > 0)
             {
-
                 valor = 1;
                 return valor;
             }
@@ -451,7 +415,6 @@ namespace SplitCamionetas
                 thisConnection.Close();
                 if (Embxexisteembarque.Trim().Length > 0)
                 {
-
                     valor = 2;
                     return valor;
                 }
@@ -464,7 +427,6 @@ namespace SplitCamionetas
                     thisConnection.Close();
                 }
             }
-
 
             thisConnection.Open();
             Cadena = "Select prov_clave from tb_mstr_facturas_nal Where pdn_folio = '" + validar + "'";
@@ -480,7 +442,6 @@ namespace SplitCamionetas
                     return valor;
                 }
             }
-
 
             thisConnection.Open();
             Cadena = "Select pdn_folio from tb_mstr_pedidos_nal Where pdn_folio = '" + validar + "' AND pdn_estatus = 'C'";
@@ -503,7 +464,6 @@ namespace SplitCamionetas
                 valor = 5;
                 return valor;
             }
-
 
             thisConnection.Open();
             string CadenaPedido = "Select cve_auto from tb_mstr_facturas_nal Where pdn_folio = '" + validar + "'";
@@ -533,29 +493,24 @@ namespace SplitCamionetas
                         valor = 7;
                         return valor;
                     }
-
                 }
                 else
                 {
                     Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                    alertDialog.SetTitle(Html.FromHtml("<font color='#5DCDD4' size = 10>Pedido Sin Factura</font>"));
+                    alertDialog.SetTitle(Html.FromHtml("<font color='" + COLOR_INFO_TITULO + "'>Pedido Sin Factura</font>"));
                     alertDialog.SetIcon(Resource.Drawable.exito);
                     alertDialog.SetCancelable(false);
-                    alertDialog.SetMessage(Html.FromHtml("<font color='#5FBDD5' size = 10>El pedido: " + pedido.Text.Trim() + " Se Asignará a la Camioneta Actual (" + cvvehiculo.Trim() + ")</font>"));
+                    alertDialog.SetMessage(Html.FromHtml("<font color='" + COLOR_MENSAJE + "'>El pedido: " + pedido.Text.Trim() + " Se Asignará a la Camioneta Actual (" + cvvehiculo.Trim() + ")</font>"));
                     alertDialog.SetNeutralButton("Ok", delegate
                     {
                         alertDialog.Dispose();
                     });
                     alertDialog.Show();
                 }
-
             }
 
             return valor;
-
         }
-
-
 
         List<FlimStarInfo> listItem = new List<FlimStarInfo>();
 
@@ -569,7 +524,6 @@ namespace SplitCamionetas
             MenuInflater.Inflate(Resource.Menu.top_menus, menu);
             return base.OnCreateOptionsMenu(menu);
         }
-
 
         private void spinner_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
@@ -593,7 +547,6 @@ namespace SplitCamionetas
                 pedido.RequestFocus();
                 capturar.Enabled = false;
 
-
                 List<FlimStarInfo> lstFlimStar = detalle_pedido(folio.Trim(), "Individual");
                 lstFlimStar.Clear();
                 var gvObject = FindViewById<GridView>(Resource.Id.gvCtrl);
@@ -602,13 +555,8 @@ namespace SplitCamionetas
                 gvObject.Adapter = new myGVItemAdapter(this, lstFlimStar);
                 gvObject.ItemClick += new EventHandler<AdapterView.ItemClickEventArgs>(OnGridView_ItemClicked);
 
-
-
                 Spinner spinner = FindViewById<Spinner>(Resource.Id.pedidos);
-
                 spinner.Adapter = null;
-
-
 
                 db.Query<Pedidos>("delete from  [Pedidos]");
                 db.Query<ConPedidos>("delete from  [ConPedidos]");
@@ -617,10 +565,6 @@ namespace SplitCamionetas
                 db.Query<xprod>("delete from  [xprod]");
                 mOp = "A";
                 Toast.MakeText(this, "Modo Captura Activado", ToastLength.Short).Show();
-
-
-
-
             }
             else if (Convert.ToString(item.TitleFormatted) == "Consultar")
             {
@@ -632,7 +576,6 @@ namespace SplitCamionetas
                 Spinner spinner = FindViewById<Spinner>(Resource.Id.pedidos);
                 spinner.Adapter = null;
 
-
                 List<FlimStarInfo> lstFlimStar = detalle_pedido(folio.Trim(), "Individual");
                 lstFlimStar.Clear();
                 var gvObject = FindViewById<GridView>(Resource.Id.gvCtrl);
@@ -640,7 +583,6 @@ namespace SplitCamionetas
                 gvObject.Adapter = null;
                 gvObject.Adapter = new myGVItemAdapter(this, lstFlimStar);
                 gvObject.ItemClick += new EventHandler<AdapterView.ItemClickEventArgs>(OnGridView_ItemClicked);
-
 
                 db.Query<Pedidos>("delete from  [Pedidos]");
                 db.Query<ConPedidos>("delete from  [ConPedidos]");
@@ -667,9 +609,9 @@ namespace SplitCamionetas
                 if (mOp == "C")
                 {
                     Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
-                    alertDialog.SetTitle(Html.FromHtml("<font color='#DF0101' size = 10>Modo Consulta Activado</font>"));
+                    alertDialog.SetTitle(Html.FromHtml("<font color='" + COLOR_ERROR_TITULO + "'>Modo Consulta Activado</font>"));
                     alertDialog.SetIcon(Resource.Drawable.no);
-                    alertDialog.SetMessage(Html.FromHtml("<font color='#FFFFFF' size = 10>Para realizar el acumulado, debe estar en modo captura.\r\nFavor de validar que el modo captura esta activado</font>"));
+                    alertDialog.SetMessage(Html.FromHtml("<font color='" + COLOR_MENSAJE + "'>Para realizar el acumulado, debe estar en modo captura.\r\nFavor de validar que el modo captura esta activado</font>"));
                     alertDialog.SetNeutralButton("Ok", delegate
                     {
                         alertDialog.Dispose();
@@ -678,16 +620,14 @@ namespace SplitCamionetas
                     return base.OnOptionsItemSelected(item);
                 }
 
-
                 List<FlimStarInfo> lstFlimStar = detalle_pedido(pedido.Text.Trim(), "Acumulado");
                 var gvObject = FindViewById<GridView>(Resource.Id.gvCtrl);
                 gvObject.Adapter = new myGVItemAdapter(this, lstFlimStar);
-                gvObject.ItemClick += new EventHandler<AdapterView.ItemClickEventArgs>(OnGridView_ItemClicked); //detalle_pedido
+                gvObject.ItemClick += new EventHandler<AdapterView.ItemClickEventArgs>(OnGridView_ItemClicked);
             }
 
             return base.OnOptionsItemSelected(item);
         }
-
 
         //Cargar conexion de base de datos sqlite
         private void LoadConnection()
@@ -716,7 +656,6 @@ namespace SplitCamionetas
                 }
                 catch (SQLiteException e)
                 {
-
                     string errorsqlite = e.ToString().Trim();
                     errorsqlite = errorsqlite.Substring(24, 23);
                     if (errorsqlite == "no such table: XLoteSug")
@@ -725,8 +664,6 @@ namespace SplitCamionetas
                     }
                 }
             }
-
-
         }
 
         List<FlimStarInfo> ConsPed(string mped)
@@ -734,7 +671,6 @@ namespace SplitCamionetas
             thisConnection.Open();
             listItem.Clear();
             string contenido = "";
-            //thisConnection.Open();
             string cadena = "Select DISTINCT A.prod_clave from tb_det_split AS A  JOIN tb_cat_producto AS B ON A.prod_clave = B.prod_clave Where A.emb_folio = '" + pedido.Text.Trim() + "' Order by A.prod_clave";
             SqlDataAdapter da = new SqlDataAdapter(cadena, thisConnection);
             DataSet ds = new DataSet();
@@ -747,7 +683,6 @@ namespace SplitCamionetas
                 string producto = "";
                 string cadena2 = "Select A.no_lote, A.prod_clave, A.tarima, A.cajas, B.prod_nombre from tb_det_split AS A  JOIN tb_cat_producto AS B ON A.prod_clave = B.prod_clave Where A.emb_folio = '" + pedido.Text.Trim() + "' AND A.prod_clave = '" + Row["prod_clave"].ToString().Trim() + "' Order by A.tarima, A.prod_clave, A.no_lote";
 
-
                 SqlDataAdapter dai = new SqlDataAdapter(cadena2, thisConnection);
                 DataSet dsi = new DataSet();
 
@@ -757,7 +692,6 @@ namespace SplitCamionetas
                 {
                     producto = Rowi["prod_nombre"].ToString().Trim();
                     texto = texto + "Lote: " + Rowi["no_lote"].ToString().Trim() + " Tarima: " + Rowi["tarima"].ToString().Trim() + " Surtido: " + Rowi["cajas"].ToString().Trim() + System.Environment.NewLine;
-
                 }
 
                 listItem.Add(new FlimStarInfo()
@@ -768,14 +702,10 @@ namespace SplitCamionetas
                 });
             }
 
-
-            //LbxCons.Font = new Font(LbxCons.Font.Name, 7);   ;
             thisConnection.Close();
 
             return listItem;
         }
-
-
 
         List<FlimStarInfo> detalle_pedido(string mped, string mov)
         {
@@ -784,8 +714,6 @@ namespace SplitCamionetas
 
             if (mov != "Acumulado")
             {
-
-
                 var query = db.Table<Pedidos>();
                 foreach (var captu in query)
                 {
@@ -799,27 +727,21 @@ namespace SplitCamionetas
                         });
                     }
                 }
-
             }
             else
             {
-
                 var query = db.Table<ConPedidos>();
                 foreach (var captu in query)
                 {
-
                     listItem.Add(new FlimStarInfo()
                     {
                         Name = captu.nombre,
                         Age = "Pedidos: " + captu.pedido + " Surtido: " + captu.surtido,
                         ImageID = Resource.Drawable.producto
                     });
-
                 }
-
             }
 
-            //LbxCons.Font = new Font(LbxCons.Font.Name, 7);   ;
             thisConnection.Close();
 
             return listItem;
@@ -835,16 +757,13 @@ namespace SplitCamionetas
             StartActivity(intent);
         }
 
-
         public override Boolean OnKeyDown(Keycode keyCode, KeyEvent e)
         {
-
             if (keyCode == Keycode.Back)
             {
                 Intent intent = new Intent(this, typeof(MainActivity));
                 intent.AddFlags(ActivityFlags.ClearTop);
                 Intent.AddFlags(ActivityFlags.SingleTop);
-                //intent.PutExtra("cvcamioneta", cvvehiculo.ToString());
                 StartActivity(intent);
             }
             return true;
@@ -857,14 +776,12 @@ namespace SplitCamionetas
             AlertDialog builder = new AlertDialog.Builder(this).Create();
             builder.SetView(view);
             builder.SetCanceledOnTouchOutside(false);
-            //EditText usuario = view.FindViewById<EditText>(Resource.Id.txtUsername);
             EditText password = view.FindViewById<EditText>(Resource.Id.txtPassword);
             Button buttonaceptar = view.FindViewById<Button>(Resource.Id.btnLoginLL);
             Button button = view.FindViewById<Button>(Resource.Id.btnClearLL);
             button.Click += delegate
             {
                 builder.Dismiss();
-
             };
             buttonaceptar.Click += delegate
             {
@@ -885,10 +802,16 @@ namespace SplitCamionetas
                     StartActivity(intent);
                     builder.Dismiss();
                 }
-
             };
             builder.Show();
         }
-
+        private string NoSplit(string mped)
+        {
+            string Cadena = "Select MAX(tarima) from tb_det_split where emb_folio = '" + mped + "'";
+            SqlCommand cmd = new SqlCommand(Cadena, thisConnection);
+            string cad = Convert.ToString(cmd.ExecuteScalar());
+            cad = (cad.Trim().Length == 0) ? "1" : (Convert.ToInt32(cad) + 1).ToString();
+            return cad;
+        }
     }
 }

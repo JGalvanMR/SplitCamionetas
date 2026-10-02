@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#111827"
-    android:padding="16dp">
+    android:padding="8dp">
 
 	<!-- Opciones de Captura (RadioGroup responsivo) -->
 	<RadioGroup

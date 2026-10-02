@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#111827"
-    android:padding="16dp">
+    android:padding="8dp">
 
 	<!-- Datos Superiores (Split y Pedido) -->
 	<TextView
@@ -43,6 +43,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+			android:scaleX="0.7"
+			android:scaleY="0.7"
             android:checked="true"
             android:text="CAJA X CAJA" />
 		<RadioButton
@@ -52,6 +54,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+			android:scaleX="0.7"
+			android:scaleY="0.7"
             android:text="TARIMA COMPLETA" />
 	</RadioGroup>
 
@@ -71,13 +75,12 @@
         android:singleLine="true"
         android:maxLines="1"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+		android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
         android:background="#1F2937"
         android:textColor="@android:color/white"
         android:textColorHint="#6B7280"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
+		android:padding="12dp"
         android:id="@+id/Foliocom"
         android:imeOptions="actionDone" />
 
@@ -88,7 +91,7 @@
         android:textStyle="bold"
         android:text="Grabar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+		android:layout_height="wrap_content"
         android:background="#2563EB"
         android:layout_marginBottom="12dp"
         android:id="@+id/GuardarCapturadocom" />
