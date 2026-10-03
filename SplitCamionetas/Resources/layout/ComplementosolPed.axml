@@ -5,24 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#111827"
-    android:padding="8dp">
+    android:padding="4dp">
 
 	<TextView
         android:textColor="#9CA3AF"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:text="Small Text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         android:id="@+id/usuariocom" />
 
 	<TextView
         android:textColor="@android:color/white"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:text="Pedido:"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="2dp"
         android:id="@+id/textView2com"
         android:singleLine="true"
         android:imeOptions="actionDone" />
@@ -30,38 +30,39 @@
 	<EditText
         android:inputType="number"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="6dp"
         android:background="#1F2937"
         android:textColor="@android:color/white"
         android:textColorHint="#6B7280"
-        android:padding="12dp"
+        android:padding="6dp"
         android:id="@+id/agregarpedidocom" />
 
 	<Button
+        android:minHeight="0dp"
         android:textColor="@android:color/white"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:text="Capturar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="8dp"
         android:backgroundTint="#2563EB"
         android:id="@+id/button1com" />
 
 	<TextView
         android:textColor="#9CA3AF"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:text="DETALLE DE PRODUCTO:"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         android:id="@+id/textView4" />
 
 	<GridView
         android:minWidth="25px"
         android:minHeight="25px"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:numColumns="1"
         android:id="@+id/gvCtrcom"
         android:layout_weight="1"
@@ -69,12 +70,12 @@
 
 	<TextView
         android:textColor="@android:color/white"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:text="000|000:"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:id="@+id/textTOTALESCAcom" />
 
 </LinearLayout>

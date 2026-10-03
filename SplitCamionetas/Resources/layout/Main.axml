@@ -11,43 +11,43 @@
 	<ImageView
         android:src="@drawable/logos"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="48dp"
         android:scaleType="fitCenter"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="6dp"
         android:id="@+id/iVlogos" />
 
 	<ImageView
         android:src="@drawable/logo_splitcamionetas"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="48dp"
         android:scaleType="fitCenter"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="10dp"
         android:id="@+id/iVlogo" />
 
 	<TextView
         android:textColor="@android:color/white"
         android:textStyle="bold"
         android:text="Armado de Tarimas por Split"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="18sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="10dp"
         android:id="@+id/tvlogin"
         android:gravity="center" />
 
 	<TextView
         android:textColor="#9CA3AF"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:text="Responsable:"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="2dp"
         android:id="@+id/textView2" />
 
 	<Spinner
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginBottom="16dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="8dp"
         android:id="@+id/spinner2"
         android:background="#1F2937"
         android:popupBackground="#1F2937"
@@ -55,31 +55,32 @@
 
 	<TextView
         android:textColor="#9CA3AF"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:text="Vehículo:"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="2dp"
         android:id="@+id/textView1" />
 
 	<Spinner
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginBottom="24dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="10dp"
         android:id="@+id/spinner1"
         android:background="#1F2937"
         android:popupBackground="#1F2937"
         android:spinnerMode="dropdown" />
 
 	<Button
+        android:minHeight="0dp"
         android:textColor="@android:color/white"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:text="Login"
         android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="40dp"
         android:backgroundTint="#2563EB"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:id="@+id/btnlogin" />
 
 	<TextView

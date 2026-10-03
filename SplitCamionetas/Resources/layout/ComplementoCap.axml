@@ -5,27 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#111827"
-    android:padding="8dp">
+    android:padding="4dp">
 
 	<!-- Datos Superiores (Split y Pedido) -->
 	<TextView
         android:textColor="#9CA3AF"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:text="SPLIT:"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
+        android:layout_marginBottom="1dp"
         android:id="@+id/splitcantidadcom"
         android:gravity="end"
         android:singleLine="true" />
 
 	<TextView
         android:textColor="#9CA3AF"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:text="PEDIDO:"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="6dp"
         android:id="@+id/pedidoencapturacom"
         android:gravity="end"
         android:singleLine="true" />
@@ -35,38 +35,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="12dp">
+        android:layout_marginBottom="6dp">
 		<RadioButton
+            android:minHeight="0dp"
             android:textColor="@android:color/white"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:id="@+id/comradio_blanco"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-			android:scaleX="0.7"
-			android:scaleY="0.7"
             android:checked="true"
             android:text="CAJA X CAJA" />
 		<RadioButton
+            android:minHeight="0dp"
             android:textColor="@android:color/white"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:id="@+id/comradio_verde"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-			android:scaleX="0.7"
-			android:scaleY="0.7"
             android:text="TARIMA COMPLETA" />
 	</RadioGroup>
 
 	<!-- Campo de Código / Folio -->
 	<TextView
         android:textColor="@android:color/white"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:text="CODIGO:"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="2dp"
         android:id="@+id/textView12"
         android:singleLine="true" />
 
@@ -75,36 +73,37 @@
         android:singleLine="true"
         android:maxLines="1"
         android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+		android:layout_height="40dp"
+        android:layout_marginBottom="6dp"
         android:background="#1F2937"
         android:textColor="@android:color/white"
         android:textColorHint="#6B7280"
-		android:padding="12dp"
+		android:padding="6dp"
         android:id="@+id/Foliocom"
         android:imeOptions="actionDone" />
 
 	<!-- Botón Grabar -->
 	<Button
+        android:minHeight="0dp"
         android:textColor="@android:color/white"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:text="Grabar"
         android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="40dp"
         android:background="#2563EB"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="6dp"
         android:id="@+id/GuardarCapturadocom" />
 
 	<!-- Total capturado -->
 	<TextView
         android:textColor="@android:color/white"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:text="000"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         android:id="@+id/totalcapturadocom" />
 
 	<!-- Listado (GridView) -->
@@ -117,12 +116,13 @@
         android:numColumns="1"
         android:id="@+id/gvCtr2com"
         android:columnWidth="150dp"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="4dp" />
 
 	<!-- CheckBox Eliminar Caja -->
 	<CheckBox
+        android:minHeight="0dp"
         android:textColor="@android:color/white"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:text="Eliminar Caja"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

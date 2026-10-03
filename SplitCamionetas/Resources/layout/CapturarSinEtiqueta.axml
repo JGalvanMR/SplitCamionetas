@@ -4,18 +4,18 @@
 	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:background="#111827">
+	android:background="#111827"
+	android:padding="4dp">
 	<TextView
 		android:textColor="@android:color/white"
-		android:textSize="16sp"
+		android:textSize="14sp"
 		android:text="Selecciona el Producto"
-		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/textView1" />
 	<Spinner
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="40dp"
 		android:id="@+id/spinnerproducto"
 		android:popupBackground="#233150"
 		android:spinnerMode="dropdown"
@@ -23,15 +23,14 @@
 		android:backgroundTint="@android:color/white"/>
 	<TextView
 		android:textColor="@android:color/white"
-		android:textSize="16sp"
+		android:textSize="14sp"
 		android:text="Folio del Producto"
-		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/FolioProd" />
 	<Spinner
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="40dp"
 		android:id="@+id/spinnerFolioProd"
 		android:popupBackground="#233150"
 		android:spinnerMode="dropdown"
@@ -39,15 +38,14 @@
 		android:backgroundTint="@android:color/white"/>
 	<TextView
 		android:textColor="@android:color/white"
-		android:textSize="16sp"
+		android:textSize="14sp"
 		android:text="Numero de Tarima"
-		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/textView2" />
 	<Spinner
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="40dp"
 		android:id="@+id/spinnerTar"
 		android:popupBackground="#233150"
 		android:spinnerMode="dropdown"
@@ -55,32 +53,31 @@
 		android:backgroundTint="@android:color/white"/>
 	<TextView
 		android:textColor="@android:color/white"
-		android:textSize="16sp"
+		android:textSize="14sp"
 		android:text="Numero de Caja"
-		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/textView3" />
 	<Spinner
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="40dp"
 		android:id="@+id/SpinnerCaja"
 		android:popupBackground="#233150"
 		android:spinnerMode="dropdown"
 		android:foregroundTint="@android:color/white"
 		android:backgroundTint="@android:color/white"/>
 	<CheckBox
+		android:minHeight="0dp"
 		android:textColor="@android:color/white"
-		android:textSize="16sp"
+		android:textSize="14sp"
 		android:text="Etiqueta Erronea"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/Eliminar" />
 	<TextView
 		android:textColor="@android:color/white"
-		android:textSize="16sp"
+		android:textSize="14sp"
 		android:text="Codigo"
-		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/textView4" />
@@ -93,10 +90,11 @@
 		android:id="@+id/Folio"
 		android:imeOptions="actionDone" />
 	<Button
+        android:minHeight="0dp"
 		android:textColor="@android:color/white"
-		android:textSize="16sp"
+		android:textSize="14sp"
 		android:text="MANDAR A REIMPRESION"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="40dp"
 		android:id="@+id/btnsave"/>
 </LinearLayout>

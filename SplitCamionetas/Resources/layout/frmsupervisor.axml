@@ -12,31 +12,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="AUTORIZACIÓN"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="#FFFFFF"
         android:background="#0D6EFD"
         android:gravity="center"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        android:layout_marginBottom="24dp" />
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:layout_marginBottom="10dp" />
 
 	<!-- Campo de Contraseña -->
 	<EditText
         android:id="@+id/txtPassword"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="24dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="10dp"
         android:inputType="textPassword"
         android:hint="Password"
         android:textColorHint="#6B7280"
         android:textColor="@android:color/white"
         android:background="#1F2937"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:textSize="14sp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:textSize="12sp"
         android:longClickable="false" />
 
 	<!-- Botones de Acción -->
@@ -46,17 +46,18 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="20dp">
 
 		<Button
+        android:minHeight="0dp"
             android:id="@+id/btnLoginLL"
             android:layout_width="0dp"
-			android:layout_height="wrap_content"
+			android:layout_height="40dp"
             android:layout_weight="1"
             android:text="Aceptar"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
             android:background="#198754"
@@ -64,12 +65,13 @@
             android:layout_marginEnd="8dp" />
 
 		<Button
+        android:minHeight="0dp"
             android:id="@+id/btnClearLL"
             android:layout_width="0dp"
-			android:layout_height="wrap_content"
+			android:layout_height="40dp"
             android:layout_weight="1"
             android:text="Cancelar"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
             android:background="#DC3545"

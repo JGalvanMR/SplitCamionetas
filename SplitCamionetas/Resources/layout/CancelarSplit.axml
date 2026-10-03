@@ -5,26 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#111827"
-    android:padding="8dp">
+    android:padding="4dp">
 
 	<!-- Usuario o Info secundaria -->
 	<TextView
         android:textColor="#9CA3AF"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:text="Small Text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         android:id="@+id/usercancel" />
 
 	<!-- Etiqueta del Pedido a Cancelar -->
 	<TextView
         android:textColor="@android:color/white"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:text="Pedido A Cancelar:"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="2dp"
         android:singleLine="true"
         android:imeOptions="actionDone" />
 
@@ -32,23 +32,23 @@
 	<EditText
         android:inputType="number"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginBottom="16dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="8dp"
         android:background="#1F2937"
         android:textColor="@android:color/white"
         android:textColorHint="#6B7280"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:id="@+id/pedidocancelar" />
 
 	<!-- Título de la Lista -->
 	<TextView
         android:textColor="#9CA3AF"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:text="Split Capturados:"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="4dp" />
 
 	<!-- Listado (GridView) -->
 	<GridView
@@ -60,12 +60,12 @@
         android:numColumns="1"
         android:id="@+id/gvCtrCancel"
         android:columnWidth="150dp"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="6dp" />
 
 	<!-- Totales / Resumen -->
 	<TextView
         android:textColor="@android:color/white"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:text="Total de Splits: 000:"
         android:layout_width="match_parent"
