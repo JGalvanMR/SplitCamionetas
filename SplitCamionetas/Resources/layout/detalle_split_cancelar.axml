@@ -5,17 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#111827"
-    android:padding="8dp">
+    android:padding="4dp">
 
 	<!-- Título Principal -->
 	<TextView
         android:textColor="@android:color/white"
         android:textStyle="bold"
         android:text="Productos En Split"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="18sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:id="@+id/textView1"
         android:gravity="center" />
 
@@ -29,16 +29,17 @@
         android:numColumns="1"
         android:id="@+id/gvCtrcapturasplit"
         android:columnWidth="150dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="8dp" />
 
 	<!-- Botón de Cancelación -->
 	<Button
+        android:minHeight="0dp"
         android:textColor="@android:color/white"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:text="Cancelar Split Completo"
         android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="40dp"
         android:background="#DC3545"
         android:gravity="center"
         android:drawableStart="@drawable/cerrar"

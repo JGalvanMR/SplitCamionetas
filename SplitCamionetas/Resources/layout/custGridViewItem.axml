@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#111827"
-    android:padding="12dp">
+    android:padding="6dp">
 
     <!-- Contenedor horizontal de la fila -->
     <LinearLayout
@@ -18,11 +18,11 @@
         <!-- Imagen / Avatar con tamaño fijo -->
         <ImageView
             android:src="@android:drawable/ic_menu_gallery"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:scaleType="centerCrop"
             android:id="@+id/imgPers"
-            android:layout_marginEnd="12dp" />
+            android:layout_marginEnd="8dp" />
 
         <!-- Contenedor de Textos (Ocupa el espacio restante con weight) -->
         <LinearLayout
@@ -38,9 +38,9 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/txtName"
                 android:textColor="@android:color/white"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="4dp" />
+                android:layout_marginBottom="2dp" />
 
             <TextView
                 android:text="Text"
@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/txtAge"
                 android:textColor="#9CA3AF"
-                android:textSize="14sp" />
+                android:textSize="12sp" />
 
         </LinearLayout>
 
