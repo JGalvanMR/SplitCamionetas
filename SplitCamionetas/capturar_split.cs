@@ -954,9 +954,10 @@ namespace SplitCamionetas
 
         private bool CatalogoListo = false;
 
-        // Resuelve tipo, recibo, producto y tarima de la etiqueta blanca consultando la trazabilidad:
-        // los ultimos 3 digitos son la caja y el resto es pti_clave. Usa su propia conexion (no la compartida)
-        // y un timeout corto para no bloquear la pantalla si no hay red. Si no encuentra la etiqueta devuelve false.
+        // Resuelve tipo, recibo, producto y tarima de la etiqueta blanca consultando la trazabilidad.
+        // Paso 1: los ultimos 3 digitos son la caja y el resto es pti_clave.
+        // Paso 2 (si el paso 1 no encuentra nada): pti_clave = primeros 15 caracteres + digitos 2 y 3 repetidos (formato getPTI_Clave).
+        // Usa su propia conexion (no la compartida) y un timeout corto para no bloquear la pantalla si no hay red.
         private bool ValidarCapturas(string captura, out string mtip, out string mfol, out string mcod, out string mtar, out string mcaj)
         {
             mtip = mfol = mcod = mtar = mcaj = null;
@@ -966,32 +967,24 @@ namespace SplitCamionetas
                 if (captura.Length < 4) return false;
 
                 string caja = captura.Substring(captura.Length - 3, 3);
-                string clave = captura.Substring(0, captura.Length - 3).Trim();
+                string clave1 = captura.Substring(0, captura.Length - 3).Trim();
+                string clave2 = ClavePtiAlterna(captura);
 
                 var cs = new SqlConnectionStringBuilder(MainActivity.cadenaConexion);
                 cs.ConnectTimeout = 10;
 
-                string recibo = null, tarima = null, producto = null, tipo = null;
+                string[] fila = null;
                 using (var con = new SqlConnection(cs.ConnectionString))
                 {
                     con.Open();
-                    using (var cmd = new SqlCommand("SELECT recibo, tarima, prod_clave, tipo FROM tb_det_trazabilidad WHERE pti_clave = @captura", con))
-                    {
-                        cmd.CommandTimeout = 15;
-                        cmd.Parameters.AddWithValue("@captura", clave);
-                        using (var rd = cmd.ExecuteReader())
-                        {
-                            while (rd.Read())
-                            {
-                                recibo = rd["recibo"].ToString().Trim();
-                                tarima = rd["tarima"].ToString().Trim();
-                                producto = rd["prod_clave"].ToString().Trim();
-                                tipo = rd["tipo"].ToString().Trim();
-                            }
-                        }
-                    }
+                    fila = BuscaTrazabilidad(con, clave1);
+                    if (fila == null && !string.IsNullOrEmpty(clave2))
+                        fila = BuscaTrazabilidad(con, clave2);
                 }
 
+                if (fila == null) return false;
+
+                string recibo = fila[0], tarima = fila[1], producto = fila[2], tipo = fila[3];
                 if (string.IsNullOrEmpty(recibo) || string.IsNullOrEmpty(tarima) || string.IsNullOrEmpty(producto) || string.IsNullOrEmpty(tipo))
                     return false;
 
@@ -1007,6 +1000,40 @@ namespace SplitCamionetas
             {
                 return false;
             }
+        }
+
+        // Devuelve {recibo, tarima, prod_clave, tipo} o null si no existe esa pti_clave
+        private string[] BuscaTrazabilidad(SqlConnection con, string ptiClave)
+        {
+            string[] fila = null;
+            using (var cmd = new SqlCommand("SELECT recibo, tarima, prod_clave, tipo FROM tb_det_trazabilidad WHERE pti_clave = @captura", con))
+            {
+                cmd.CommandTimeout = 15;
+                cmd.Parameters.AddWithValue("@captura", ptiClave);
+                using (var rd = cmd.ExecuteReader())
+                {
+                    while (rd.Read())
+                    {
+                        fila = new string[]
+                        {
+                            rd["recibo"].ToString().Trim(),
+                            rd["tarima"].ToString().Trim(),
+                            rd["prod_clave"].ToString().Trim(),
+                            rd["tipo"].ToString().Trim()
+                        };
+                    }
+                }
+            }
+            return fila;
+        }
+
+        // pti_clave alterna: 15 caracteres + 3 digitos + 3 digitos -> 15 caracteres + d2 d3 d2 d3 de los primeros 3 digitos
+        private string ClavePtiAlterna(string codigoEtiqueta)
+        {
+            var m = System.Text.RegularExpressions.Regex.Match(codigoEtiqueta, @"^(.{15})(\d{3})\d{3}$");
+            if (!m.Success) return "";
+            string tres = m.Groups[2].Value;
+            return m.Groups[1].Value + tres[1] + tres[2] + tres[1] + tres[2];
         }
 
         private void LoadConnection()
