@@ -141,6 +141,13 @@ namespace SplitCamionetas
             Guardar.Click += BtnGuardar_Click;
             Guardar.Enabled = false;
 
+            // La carga inicial consulta SQL Server: se hace en segundo plano para no bloquear la pantalla (ANR)
+            Procesando = true;
+            var cargando = ProgressDialog.Show(this, "Espere Por Favor...", "Cargando informacion...", true);
+            new System.Threading.Thread(new ThreadStart(delegate
+            {
+                try
+                {
             AbreConexion();
             string cadena = "Select prod_clave,prod_nombre from tb_cat_producto where estatus = 'A' AND (prod_tipo = 'PTP' OR prod_tipo = 'PTC')  order by LEN(prod_clave) DESC";
             //string cadena = "Select prod_clave,prod_nombre from tb_cat_producto where prod_tipo in ( 'PTP', 'PTC') and estatus='A' and len(prod_clave) >= 9 order by LEN(prod_clave) DESC";
@@ -154,8 +161,13 @@ namespace SplitCamionetas
             var quex = db.Table<Pedidos>();
             foreach (var captu in quex)
             {
-                nosplit.Text = "Split Numero: " + NoSplit(captu.folio.ToString());
-                pedidoencaptura.Text = "Pedido Actual: " + captu.folio.ToString();
+                string splitNum = NoSplit(captu.folio.ToString());
+                string pedAct = captu.folio.ToString();
+                RunOnUiThread(() =>
+                {
+                    if (nosplit != null) nosplit.Text = "Split Numero: " + splitNum;
+                    if (pedidoencaptura != null) pedidoencaptura.Text = "Pedido Actual: " + pedAct;
+                });
             }
 
             CierraConexion();
@@ -170,6 +182,20 @@ namespace SplitCamionetas
             cmnd.CommandText = "select sts_reetiquetado from Tb_Reetiquetadohabilitar";
             Desactivarhabilitarreimprimir = Convert.ToInt32(cmnd.ExecuteScalar());
             CierraConexion();
+                    CatalogoListo = true;
+                }
+                catch (System.Exception exCarga)
+                {
+                    CierraConexion();
+                    RunOnUiThread(() => Toast.MakeText(this, "No fue posible cargar la informacion, verifique la conexion e ingrese de nuevo a la pantalla", ToastLength.Long).Show());
+                    new System.Threading.Thread(() => SendMail("jgalvan@mrlucky.com.mx", "Error generado en la carga inicial SPLIT CAMIONETAS " + exCarga, "Error En la Carga Inicial")).Start();
+                }
+                finally
+                {
+                    Procesando = false;
+                    RunOnUiThread(() => cargando.Dismiss());
+                }
+            })).Start();
 
 
             //****************************************Inicio Lectura de QR**************************************************************************************
@@ -894,6 +920,93 @@ namespace SplitCamionetas
         {
             string n = (muser ?? "").Trim();
             return n.Length > 20 ? n.Substring(0, 20) : n;
+        }
+
+        // Cajas ya leidas en presplit por recibo/tarima para un producto (1 consulta en lugar de 1 por tarima)
+        private Dictionary<string, int> PresplitLeidos(string producto)
+        {
+            var d = new Dictionary<string, int>();
+            AbreConexion();
+            try
+            {
+                string sql = "Select Eti_Recibo, Eti_TarIni, Count(fecha) AS Total From Tb_Det_Etiqueta_Presplit " +
+                             "Where Eti_Producto = '" + producto + "' AND Estatus = 'A' Group By Eti_Recibo, Eti_TarIni";
+                using (var cmdPre = new SqlCommand(sql, thisConnection))
+                using (var rd = cmdPre.ExecuteReader())
+                {
+                    while (rd.Read())
+                    {
+                        int tar;
+                        if (!int.TryParse(rd["Eti_TarIni"].ToString().Trim(), out tar)) continue;
+                        string key = rd["Eti_Recibo"].ToString().Trim() + "|" + tar;
+                        int actual;
+                        d.TryGetValue(key, out actual);
+                        d[key] = actual + Convert.ToInt32(rd["Total"]);
+                    }
+                }
+            }
+            finally
+            {
+                CierraConexion();
+            }
+            return d;
+        }
+
+        private bool CatalogoListo = false;
+
+        // Resuelve tipo, recibo, producto y tarima de la etiqueta blanca consultando la trazabilidad:
+        // los ultimos 3 digitos son la caja y el resto es pti_clave. Usa su propia conexion (no la compartida)
+        // y un timeout corto para no bloquear la pantalla si no hay red. Si no encuentra la etiqueta devuelve false.
+        private bool ValidarCapturas(string captura, out string mtip, out string mfol, out string mcod, out string mtar, out string mcaj)
+        {
+            mtip = mfol = mcod = mtar = mcaj = null;
+            try
+            {
+                captura = (captura ?? "").Trim();
+                if (captura.Length < 4) return false;
+
+                string caja = captura.Substring(captura.Length - 3, 3);
+                string clave = captura.Substring(0, captura.Length - 3).Trim();
+
+                var cs = new SqlConnectionStringBuilder(MainActivity.cadenaConexion);
+                cs.ConnectTimeout = 10;
+
+                string recibo = null, tarima = null, producto = null, tipo = null;
+                using (var con = new SqlConnection(cs.ConnectionString))
+                {
+                    con.Open();
+                    using (var cmd = new SqlCommand("SELECT recibo, tarima, prod_clave, tipo FROM tb_det_trazabilidad WHERE pti_clave = @captura", con))
+                    {
+                        cmd.CommandTimeout = 15;
+                        cmd.Parameters.AddWithValue("@captura", clave);
+                        using (var rd = cmd.ExecuteReader())
+                        {
+                            while (rd.Read())
+                            {
+                                recibo = rd["recibo"].ToString().Trim();
+                                tarima = rd["tarima"].ToString().Trim();
+                                producto = rd["prod_clave"].ToString().Trim();
+                                tipo = rd["tipo"].ToString().Trim();
+                            }
+                        }
+                    }
+                }
+
+                if (string.IsNullOrEmpty(recibo) || string.IsNullOrEmpty(tarima) || string.IsNullOrEmpty(producto) || string.IsNullOrEmpty(tipo))
+                    return false;
+
+                mtip = tipo;
+                mfol = recibo;
+                mcod = producto;
+                // Mismo formato que usa la lectura de etiqueta verde (PTP 3 digitos, PTC 2 digitos)
+                mtar = tipo == "PTP" ? tarima.PadLeft(3, '0') : tarima.PadLeft(2, '0');
+                mcaj = caja;
+                return true;
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
         }
 
         private void LoadConnection()
@@ -2003,6 +2116,12 @@ namespace SplitCamionetas
 
         void ITextWatcher.OnTextChanged(ICharSequence s, int start, int before, int count)
         {
+            if (!CatalogoListo)
+            {
+                Toast.MakeText(this, "Cargando informacion, espere un momento", ToastLength.Short).Show();
+                return;
+            }
+
             if (Procesando)
             {
                 Toast.MakeText(this, "Procesando, espere un momento antes de leer otra etiqueta", ToastLength.Short).Show();
@@ -2077,6 +2196,16 @@ namespace SplitCamionetas
             int tam = foliocaptura.Text.Length;
             string mcaj = "", mtar = "", mcod = "", mfol = "", mtip = "", Ent = "N";
 
+            string mtipDB, mfolDB, mcodDB, mtarDB, mcajDB;
+            bool porTrazabilidad = ValidarCapturas(foliocaptura.Text.Trim(), out mtipDB, out mfolDB, out mcodDB, out mtarDB, out mcajDB);
+            if (porTrazabilidad)
+            {
+                mtip = mtipDB; mfol = mfolDB; mcod = mcodDB; mtar = mtarDB; mcaj = mcajDB;
+            }
+            else
+            {
+            try
+            {
             for (int i = 0; i < CatProd.Rows.Count; i++)
             {
                 string producto_clave = CatProd.Rows[i]["Prod_Clave"].ToString().Trim();
@@ -2107,6 +2236,17 @@ namespace SplitCamionetas
                 mtip = "PTC";
                 mcaj = restocaptura.Substring(4, 3);
                 mtar = restocaptura.Substring(0, 2);
+            }
+            }
+            catch (System.Exception)
+            {
+                // Etiqueta que no esta en trazabilidad y tampoco se puede interpretar
+                Toast.MakeText(this, "Etiqueta no reconocida, vuelva a leerla", ToastLength.Short).Show();
+                foliocaptura.SetSelection(0, foliocaptura.Text.Length);
+                foliocaptura.RequestFocus();
+                valorfinal = foliocaptura.Text;
+                return;
+            }
             }
 
 
@@ -2886,6 +3026,16 @@ namespace SplitCamionetas
 
             string mcaj = "", mtar = "", mcod = "", mfol = "", mtip = "", Ent = "N";
 
+            string mtipDB, mfolDB, mcodDB, mtarDB, mcajDB;
+            bool porTrazabilidad = ValidarCapturas(captura, out mtipDB, out mfolDB, out mcodDB, out mtarDB, out mcajDB);
+            if (porTrazabilidad)
+            {
+                mtip = mtipDB; mfol = mfolDB; mcod = mcodDB; mtar = mtarDB; mcaj = mcajDB;
+            }
+            else
+            {
+            try
+            {
             for (int i = 0; i < CatProd.Rows.Count; i++)
             {
                 string producto_clave = CatProd.Rows[i]["Prod_Clave"].ToString().Trim();
@@ -2916,6 +3066,17 @@ namespace SplitCamionetas
                 mtip = "PTC";
                 mcaj = restocaptura.Substring(4, 3);
                 mtar = restocaptura.Substring(0, 2);
+            }
+            }
+            catch (System.Exception)
+            {
+                // Etiqueta que no esta en trazabilidad y tampoco se puede interpretar
+                Toast.MakeText(this, "Etiqueta no reconocida, vuelva a leerla", ToastLength.Short).Show();
+                foliocaptura.SetSelection(0, foliocaptura.Text.Length);
+                foliocaptura.RequestFocus();
+                valorfinal = foliocaptura.Text;
+                return;
+            }
             }
 
             /*foliocaptura.Text = foliocaptura.Text.Substring(pos + 1, foliocaptura.Text.Length - (pos + 1)).Trim();
@@ -3071,6 +3232,7 @@ namespace SplitCamionetas
             ValiFechacad = "S";
             //Obtener los productos con su tipo de lo que se ha leido******************************************************************
             var productoscapturados = db.Query<xLote>("Select Tipo, Codigo, nombre FROM xLote GROUP BY Tipo, Codigo, nombre");
+            var cachePresplit = new Dictionary<string, Dictionary<string, int>>();
             db.Query<XLoteSug>("delete from[XLoteSug]");
 
             var allItems = db.Table<xLote>().ToList();
@@ -3149,12 +3311,14 @@ namespace SplitCamionetas
                 foreach (DataRow row in xlote.Rows)
                 {
                     int total_prod_simula = totalprodsimulado;
-                    string Cadena = "Select Count(fecha) AS Total From Tb_Det_Etiqueta_Presplit " +
-                                    "Where Eti_Recibo = '" + row["recibo"].ToString().Trim() + "' AND Eti_Producto = '" + captu.Codigo.Trim() + "' AND Eti_TarIni = '" + Convert.ToInt32(row["tarima"].ToString().Trim()) + "' AND Estatus = 'A'";
-
-                    AbreConexion();
-                    SqlCommand cmd = new SqlCommand(Cadena, thisConnection);
-                    int TotalLeido = Convert.ToInt32(cmd.ExecuteScalar());
+                    Dictionary<string, int> leidosPre;
+                    if (!cachePresplit.TryGetValue(captu.Codigo.Trim(), out leidosPre))
+                    {
+                        leidosPre = PresplitLeidos(captu.Codigo.Trim());
+                        cachePresplit[captu.Codigo.Trim()] = leidosPre;
+                    }
+                    int TotalLeido;
+                    leidosPre.TryGetValue(row["recibo"].ToString().Trim() + "|" + Convert.ToInt32(row["tarima"].ToString().Trim()), out TotalLeido);
                     int usadasant = 0;
                     CierraConexion();
 
