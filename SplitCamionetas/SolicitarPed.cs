@@ -805,13 +805,6 @@ namespace SplitCamionetas
             };
             builder.Show();
         }
-        private string NoSplit(string mped)
-        {
-            string Cadena = "Select MAX(tarima) from tb_det_split where emb_folio = '" + mped + "'";
-            SqlCommand cmd = new SqlCommand(Cadena, thisConnection);
-            string cad = Convert.ToString(cmd.ExecuteScalar());
-            cad = (cad.Trim().Length == 0) ? "1" : (Convert.ToInt32(cad) + 1).ToString();
-            return cad;
-        }
+        
     }
 }

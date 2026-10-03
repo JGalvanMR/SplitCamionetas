@@ -133,6 +133,8 @@ namespace SplitCamionetas
 
             foliocaptura = FindViewById<EditText>(Resource.Id.Folio);
             total = FindViewById<TextView>(Resource.Id.totalcapturado);
+            pedidoencaptura = FindViewById<TextView>(Resource.Id.pedidoencapturacom);
+            nosplit = FindViewById<TextView>(Resource.Id.splitcantidadcom);
             etiblanca = FindViewById<RadioButton>(Resource.Id.radio_blanco);
             etiverde = FindViewById<RadioButton>(Resource.Id.radio_verde);
             Guardar = FindViewById<Button>(Resource.Id.GuardarCapturado);
@@ -3205,6 +3207,14 @@ namespace SplitCamionetas
             //string deviceid=telephonyManager.DeviceId;
             string deviceid = CrossDeviceInfo.Current.Id;
             return deviceid;
+        }
+        private string NoSplit(string mped)
+        {
+            string Cadena = "Select MAX(tarima) from tb_det_split where emb_folio = '" + mped + "'";
+            SqlCommand cmd = new SqlCommand(Cadena, thisConnection);
+            string cad = Convert.ToString(cmd.ExecuteScalar());
+            cad = (cad.Trim().Length == 0) ? "1" : (Convert.ToInt32(cad) + 1).ToString();
+            return cad;
         }
     }
 }
