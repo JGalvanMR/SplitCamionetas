@@ -2243,6 +2243,16 @@ namespace SplitCamionetas
             foliocaptura.Text = foliocaptura.Text.Replace("=", "");
             int tam = foliocaptura.Text.Length;
             string mcaj = "", mtar = "", mcod = "", mfol = "", mtip = "", Ent = "N";
+            string mtipDB, mfolDB, mcodDB, mtarDB, mcajDB;
+            bool porTrazabilidad = ValidarCapturas(foliocaptura.Text.Trim(), out mtipDB, out mfolDB, out mcodDB, out mtarDB, out mcajDB);
+            if (porTrazabilidad)
+            {
+                mtip = mtipDB; mfol = mfolDB; mcod = mcodDB; mtar = mtarDB; mcaj = mcajDB;
+            }
+            else
+            {
+            try
+            {
             if (tam > 20) //Etiqueta de Campo que no es Aguilares y Proceso Planta
             {
                 Int32 ValorFolio = Convert.ToInt32(foliocaptura.Text.Substring(0, 6));
@@ -2311,6 +2321,18 @@ namespace SplitCamionetas
                 mfol = foliocaptura.Text.Substring(0, 6);
                 mcod = foliocaptura.Text.Substring(6, tam - 13);
                 mtip = "PTC";
+            }
+
+            }
+            catch (System.Exception)
+            {
+                // Etiqueta que no esta en trazabilidad y tampoco se puede interpretar
+                Toast.MakeText(this, "Etiqueta no reconocida, vuelva a leerla", ToastLength.Short).Show();
+                foliocaptura.SetSelection(0, foliocaptura.Text.Length);
+                foliocaptura.RequestFocus();
+                valorfinal = foliocaptura.Text;
+                return;
+            }
             }
 
             mcaj = mcaj.Trim();
@@ -2685,15 +2707,7 @@ namespace SplitCamionetas
             }
             else
             {
-                string mtipDB, mfolDB, mcodDB, mtarDB, mcajDB;
-            bool porTrazabilidad = ValidarCapturas(foliocaptura.Text.Trim(), out mtipDB, out mfolDB, out mcodDB, out mtarDB, out mcajDB);
-            if (porTrazabilidad)
-            {
-                mtip = mtipDB; mfol = mfolDB; mcod = mcodDB; mtar = mtarDB; mcaj = mcajDB;
-            }
-            else
-            {
-            for (int i = 0; i < CatProd.Rows.Count; i++)
+                for (int i = 0; i < CatProd.Rows.Count; i++)
                 {
                     string producto_clave = CatProd.Rows[i]["Prod_Clave"].ToString().Trim();
                     bool esta = foliocaptura.Text.Contains(producto_clave);
@@ -3008,12 +3022,14 @@ namespace SplitCamionetas
             string mcaj = "", mtar = "", mcod = "", mfol = "", mtip = "", Ent = "N";
 
             string mtipDB, mfolDB, mcodDB, mtarDB, mcajDB;
-            bool porTrazabilidad = ValidarCapturas(captura, out mtipDB, out mfolDB, out mcodDB, out mtarDB, out mcajDB);
+            bool porTrazabilidad = ValidarCapturas(foliocaptura.Text.Trim(), out mtipDB, out mfolDB, out mcodDB, out mtarDB, out mcajDB);
             if (porTrazabilidad)
             {
                 mtip = mtipDB; mfol = mfolDB; mcod = mcodDB; mtar = mtarDB; mcaj = mcajDB;
             }
             else
+            {
+            try
             {
             for (int i = 0; i < CatProd.Rows.Count; i++)
             {
@@ -3046,6 +3062,15 @@ namespace SplitCamionetas
                 mcaj = restocaptura.Substring(4, 3);
                 mtar = restocaptura.Substring(0, 2);
             }
+            }
+            catch (System.Exception)
+            {
+                // Etiqueta que no esta en trazabilidad y tampoco se puede interpretar
+                Toast.MakeText(this, "Etiqueta no reconocida, vuelva a leerla", ToastLength.Short).Show();
+                foliocaptura.SetSelection(0, foliocaptura.Text.Length);
+                foliocaptura.RequestFocus();
+                valorfinal = foliocaptura.Text;
+                return;
             }
             }
 
