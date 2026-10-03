@@ -928,6 +928,61 @@ namespace SplitCamionetas
 
         private bool CatalogoListo = false;
 
+        // Resuelve tipo, recibo, producto y tarima de la etiqueta blanca consultando la trazabilidad:
+        // los ultimos 3 digitos son la caja y el resto es pti_clave. Usa su propia conexion (no la compartida)
+        // y un timeout corto para no bloquear la pantalla si no hay red. Si no encuentra la etiqueta devuelve false.
+        private bool ValidarCapturas(string captura, out string mtip, out string mfol, out string mcod, out string mtar, out string mcaj)
+        {
+            mtip = mfol = mcod = mtar = mcaj = null;
+            try
+            {
+                captura = (captura ?? "").Trim();
+                if (captura.Length < 4) return false;
+
+                string caja = captura.Substring(captura.Length - 3, 3);
+                string clave = captura.Substring(0, captura.Length - 3).Trim();
+
+                var cs = new SqlConnectionStringBuilder(MainActivity.cadenaConexion);
+                cs.ConnectTimeout = 10;
+
+                string recibo = null, tarima = null, producto = null, tipo = null;
+                using (var con = new SqlConnection(cs.ConnectionString))
+                {
+                    con.Open();
+                    using (var cmd = new SqlCommand("SELECT recibo, tarima, prod_clave, tipo FROM tb_det_trazabilidad WHERE pti_clave = @captura", con))
+                    {
+                        cmd.CommandTimeout = 15;
+                        cmd.Parameters.AddWithValue("@captura", clave);
+                        using (var rd = cmd.ExecuteReader())
+                        {
+                            while (rd.Read())
+                            {
+                                recibo = rd["recibo"].ToString().Trim();
+                                tarima = rd["tarima"].ToString().Trim();
+                                producto = rd["prod_clave"].ToString().Trim();
+                                tipo = rd["tipo"].ToString().Trim();
+                            }
+                        }
+                    }
+                }
+
+                if (string.IsNullOrEmpty(recibo) || string.IsNullOrEmpty(tarima) || string.IsNullOrEmpty(producto) || string.IsNullOrEmpty(tipo))
+                    return false;
+
+                mtip = tipo;
+                mfol = recibo;
+                mcod = producto;
+                // Mismo formato que usa la lectura de etiqueta verde (PTP 3 digitos, PTC 2 digitos)
+                mtar = tipo == "PTP" ? tarima.PadLeft(3, '0') : tarima.PadLeft(2, '0');
+                mcaj = caja;
+                return true;
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+        }
+
         private void LoadConnection()
         {
             string folder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
@@ -2630,7 +2685,15 @@ namespace SplitCamionetas
             }
             else
             {
-                for (int i = 0; i < CatProd.Rows.Count; i++)
+                string mtipDB, mfolDB, mcodDB, mtarDB, mcajDB;
+            bool porTrazabilidad = ValidarCapturas(foliocaptura.Text.Trim(), out mtipDB, out mfolDB, out mcodDB, out mtarDB, out mcajDB);
+            if (porTrazabilidad)
+            {
+                mtip = mtipDB; mfol = mfolDB; mcod = mcodDB; mtar = mtarDB; mcaj = mcajDB;
+            }
+            else
+            {
+            for (int i = 0; i < CatProd.Rows.Count; i++)
                 {
                     string producto_clave = CatProd.Rows[i]["Prod_Clave"].ToString().Trim();
                     bool esta = foliocaptura.Text.Contains(producto_clave);
@@ -2944,6 +3007,14 @@ namespace SplitCamionetas
             int tam = foliocaptura.Text.Length;
             string mcaj = "", mtar = "", mcod = "", mfol = "", mtip = "", Ent = "N";
 
+            string mtipDB, mfolDB, mcodDB, mtarDB, mcajDB;
+            bool porTrazabilidad = ValidarCapturas(captura, out mtipDB, out mfolDB, out mcodDB, out mtarDB, out mcajDB);
+            if (porTrazabilidad)
+            {
+                mtip = mtipDB; mfol = mfolDB; mcod = mcodDB; mtar = mtarDB; mcaj = mcajDB;
+            }
+            else
+            {
             for (int i = 0; i < CatProd.Rows.Count; i++)
             {
                 string producto_clave = CatProd.Rows[i]["Prod_Clave"].ToString().Trim();
@@ -2974,6 +3045,8 @@ namespace SplitCamionetas
                 mtip = "PTC";
                 mcaj = restocaptura.Substring(4, 3);
                 mtar = restocaptura.Substring(0, 2);
+            }
+            }
             }
 
 
