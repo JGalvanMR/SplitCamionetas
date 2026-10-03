@@ -136,7 +136,7 @@ namespace SplitCamionetas
             Guardar.Click += BtnGuardar_Click;
             Guardar.Enabled = false;
 
-            thisConnection.Open();
+            AbreConexion();
             string cadena = "Select prod_clave,prod_nombre from tb_cat_producto where estatus = 'A' AND (prod_tipo = 'PTP' OR prod_tipo = 'PTC')  order by LEN(prod_clave) DESC";
             //string cadena = "Select prod_clave,prod_nombre from tb_cat_producto where prod_tipo in ( 'PTP', 'PTC') and estatus='A' and len(prod_clave) >= 9 order by LEN(prod_clave) DESC";
             SqlDataAdapter da = new SqlDataAdapter(cadena, thisConnection);
@@ -158,10 +158,10 @@ namespace SplitCamionetas
 
 
 
-            thisConnection.Close();
+            CierraConexion();
 
             //consulta de Folio de Campo
-            thisConnection.Open();
+            AbreConexion();
             cmnd = thisConnection.CreateCommand();
             cmnd.CommandText = "select inicio_campo from Tb_folio_campo";
             FolioCampo = Convert.ToInt32(cmnd.ExecuteScalar());
@@ -170,7 +170,7 @@ namespace SplitCamionetas
             cmnd = thisConnection.CreateCommand();
             cmnd.CommandText = "select sts_reetiquetado from Tb_Reetiquetadohabilitar";
             Desactivarhabilitarreimprimir = Convert.ToInt32(cmnd.ExecuteScalar());
-            thisConnection.Close();
+            CierraConexion();
 
 
             //****************************************Inicio Lectura de QR**************************************************************************************
@@ -208,6 +208,7 @@ namespace SplitCamionetas
         private void BtnGuardar_Click(object sender, EventArgs e)
         {
             Guardar.Enabled = false;
+            Procesando = true;
 
 
             var progressDialog = ProgressDialog.Show(this, "Espere Por Favor...", "Guardando Split", true);
@@ -215,10 +216,12 @@ namespace SplitCamionetas
 
             new System.Threading.Thread(new ThreadStart(delegate
             {//LOAD METHOD TO GET ACCOUNT INFO
+                try
+                {
 
                 db.Query<xLoteFinal>("delete from  [xLoteFinal]");
                 db.Query<Pedidos>("UPDATE [Pedidos] SET surtido = '0'");
-                thisConnection.Open();
+                AbreConexion();
                 string mped = pedidoencaptura.Text.ToString().Trim();
                 mped = mped.Replace("Pedido Actual: ", "");
                 //Actualizacion de pedido leido por cada producto
@@ -344,7 +347,7 @@ namespace SplitCamionetas
                     AgregaDetaEtiAdelantado();
                 }
 
-                thisConnection.Close();
+                CierraConexion();
 
 
 
@@ -376,6 +379,26 @@ namespace SplitCamionetas
 
                 RunOnUiThread(() => Toast.MakeText(this, "Split Almacenado Correctamente.", ToastLength.Long).Show()); //HIDE PROGRESS DIALOG 
                 RunOnUiThread(() => progressDialog.Hide());
+                }
+                catch (System.Exception exGuardar)
+                {
+                    CierraConexion();
+                    string errorGuardar = exGuardar.ToString();
+
+                    Android.App.AlertDialog.Builder alertError = new Android.App.AlertDialog.Builder(this);
+                    alertError.SetTitle(Html.FromHtml("<font color='#B71C1C' size = 10>Error en el Guardado</font>"));
+                    alertError.SetIcon(Resource.Drawable.no);
+                    alertError.SetMessage(Html.FromHtml("<font color='#212121' size = 10>Ocurrio un error inesperado durante el guardado, Favor de validar nuevamente o cancelar el split</font>"));
+                    alertError.SetCancelable(false);
+                    alertError.SetNeutralButton("Ok", delegate
+                    {
+                        alertError.Dispose();
+                    });
+                    RunOnUiThread(() => alertError.Show());
+                    RunOnUiThread(() => progressDialog.Hide());
+                    Procesando = false;
+                    new System.Threading.Thread(() => SendMail("jgalvan@mrlucky.com.mx", "Error generado en el guardado COMPLEMENTO SPLIT CAMIONETAS " + errorGuardar, "Error En el Guardado + " + dondegenera)).Start();
+                }
             })).Start();
 
         }
@@ -410,7 +433,7 @@ namespace SplitCamionetas
                 if (valor == "")
                 {
                     cadena = "INSERT INTO TB_DET_SPLIT_PRODXPED(FECHA,CVE_CAMIONETA,NOM_CAPSPLIT,PDN_FOLIO,PROD_CLAVE,PROD_NOMBRE,CANTPEDIDO,CANTSURTIDO) " +
-                                "VALUES('" + System.DateTime.Now.ToString("dd/MM/yyyy") + "','" + cvecam + "','" + muser.Substring(0, 20) +
+                                "VALUES('" + System.DateTime.Now.ToString("dd/MM/yyyy") + "','" + cvecam + "','" + NombreCapturista() +
                                 "','" + producto.folio.ToString() + "','" + producto.prod_clave.ToString() + "','" + mnom +
                                 "','" + producto.pedido.ToString() + "','" + total + "')";
                 }
@@ -505,6 +528,7 @@ namespace SplitCamionetas
                 wakeLock.Acquire();
                 //Adquirir el wakelock**************************************************************************************************
 
+                Procesando = true;
                 var progressDialog = ProgressDialog.Show(this, "Espere Por Favor...", "Validando Informacion Capturada...", true);
 
 
@@ -632,11 +656,16 @@ namespace SplitCamionetas
                         RunOnUiThread(() => Toast.MakeText(this, "Proceso Validado correctamente.", ToastLength.Long).Show()); //HIDE PROGRESS DIALOG 
                         RunOnUiThread(() => progressDialog.Hide());
                         wakeLock.Release();
+                        Procesando = false;
                     }
 
                     catch (System.Exception ex)
                     {
-                        SendMail("jgalvan@mrlucky.com.mx", "Error generado en la validacion COMPLEMENTO SPLIT CAMIONETAS " + ex, "Error En la Validacion + " + dondegenera);
+                        CierraConexion();
+                        Procesando = false;
+                        if (wakeLock.IsHeld) wakeLock.Release();
+                        RunOnUiThread(() => progressDialog.Hide());
+                        new System.Threading.Thread(() => SendMail("jgalvan@mrlucky.com.mx", "Error generado en la validacion COMPLEMENTO SPLIT CAMIONETAS " + ex, "Error En la Validacion + " + dondegenera)).Start();
                         Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
                         alertDialog.SetTitle(Html.FromHtml("<font color='#B71C1C' size = 10>Error en la validaciòn</font>"));
                         alertDialog.SetIcon(Resource.Drawable.no);
@@ -813,6 +842,34 @@ namespace SplitCamionetas
             }
         }
 
+        // ---- Manejo seguro de la conexion SQL (evita "conexion ya abierta/cerrada" tras un error) ----
+        private bool Procesando = false;
+
+        private void AbreConexion()
+        {
+            lock (thisConnection)
+            {
+                if (thisConnection.State == ConnectionState.Open) return;
+                if (thisConnection.State != ConnectionState.Closed) thisConnection.Close();
+                thisConnection.Open();
+            }
+        }
+
+        private void CierraConexion()
+        {
+            lock (thisConnection)
+            {
+                if (thisConnection.State != ConnectionState.Closed) thisConnection.Close();
+            }
+        }
+
+        // Nombre del capturista truncado a 20 caracteres sin fallar si es mas corto
+        private string NombreCapturista()
+        {
+            string n = (muser ?? "").Trim();
+            return n.Length > 20 ? n.Substring(0, 20) : n;
+        }
+
         private void LoadConnection()
         {
             string folder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
@@ -839,7 +896,7 @@ namespace SplitCamionetas
 
         List<FlimStarInfo> detalle_pedido()
         {
-            thisConnection.Open();
+            AbreConexion();
             listItem.Clear();
 
             var query = db.Table<ConPedidos>();
@@ -858,14 +915,14 @@ namespace SplitCamionetas
             mconcen = "2";
 
             //LbxCons.Font = new Font(LbxCons.Font.Name, 7);   ;
-            thisConnection.Close();
+            CierraConexion();
 
             return listItem;
         }
 
         List<FlimStarInfo> detalle_lote()
         {
-            thisConnection.Open();
+            AbreConexion();
             listItem.Clear();
 
             var query = db.Table<xLote>();
@@ -881,7 +938,7 @@ namespace SplitCamionetas
                 TotCaj++;
             }
 
-            thisConnection.Close();
+            CierraConexion();
 
             return listItem;
         }
@@ -996,10 +1053,11 @@ namespace SplitCamionetas
             db.Query<xLote>("delete from  [xLote]");
             string ok = "S";
             int tot = 0, totok = 0;
-            thisConnection.Open();
+            AbreConexion();
             string mtip = "", mfol = "", mcod = "", mtar = "", mcaj = "", mfeccap = "";
             string amtip = "", amfol = "", amcod = "", amtar = "", amcaj = "", amfeccap = "";
             var conta = 0;
+            var cacheInfo = new Dictionary<string, DataTable>(); // una consulta por tarima, no por caja
             var productoscapturados = db.Table<xprod>();
             foreach (var captu in productoscapturados)
             {
@@ -1024,7 +1082,7 @@ namespace SplitCamionetas
                     try
                     {
                         string cadenaCompPreS = "INSERT INTO TB_REGISTRO_MOVIMIENTOS(FECHA,NOM_COMPU,NOM_USU,TIPO_MOV,OP_CLAVE,FOLIO,DETALLE,SISTEMA,MOV_FOLIO) " +
-                            "VALUES(GETDATE(),'CEL " + imei + "','" + muser.Substring(0, 20) + "','COMPRES','SPLITCAMIONETAS','" + mfol + "', COMPLEMENTO - '" + lectura + "','SPLITCA','" + mfol + "')";
+                            "VALUES(GETDATE(),'CEL " + imei + "','" + NombreCapturista() + "','COMPRES','SPLITCAMIONETAS','" + mfol + "', COMPLEMENTO - '" + lectura + "','SPLITCA','" + mfol + "')";
                         //MessageBox.Show(cadena);
                         SqlCommand cmdCompPreS = new SqlCommand(cadenaCompPreS, thisConnection);
                         cmdCompPreS.ExecuteNonQuery();
@@ -1087,12 +1145,15 @@ namespace SplitCamionetas
                     cadena = "SELECT TOP(1) NUM_CAJAS AS PROD, CAJAS_SUR AS SURTIDO,NUM_LOTE AS FECCAD, ISNULL(fechacad, FORMAT( DATEADD(day, " + diascad + ", fecha), 'yyyyMMdd', 'en-US' )) AS fecha_cad FROM TB_DET_ETI_FINAL WHERE CVE_PROD = '" + mcod + "' AND FOLIO = '" + mfol + "' " +
                         "AND TARIMA = '" + Convert.ToInt32(mtar).ToString() + "' ";
 
-                SqlDataAdapter da = new SqlDataAdapter(cadena, thisConnection);
-                DataSet ds = new DataSet();
-
-                //MessageBox.Show(cadena); 
-                da.Fill(ds, "Info");
-                DataTable Info = ds.Tables["Info"];
+                DataTable Info;
+                if (!cacheInfo.TryGetValue(cadena, out Info))
+                {
+                    SqlDataAdapter daInfo = new SqlDataAdapter(cadena, thisConnection);
+                    DataSet dsInfo = new DataSet();
+                    daInfo.Fill(dsInfo, "Info");
+                    Info = dsInfo.Tables["Info"];
+                    cacheInfo[cadena] = Info;
+                }
                 //MessageBox.Show(Info.Rows.Count.ToString()); 
                 if (Info.Rows.Count == 0)
                 {
@@ -1207,7 +1268,7 @@ namespace SplitCamionetas
 
             }
 
-            thisConnection.Close();
+            CierraConexion();
             //List<FlimStarInfo> lstFlimStar = detalle_Surtido();
             //var gvObject = FindViewById<GridView>(Resource.Id.gvCtr2);
             //RunOnUiThread(() => gvObject.Adapter = new myGVItemAdapter(this, lstFlimStar));
@@ -1272,7 +1333,7 @@ namespace SplitCamionetas
         {
             string cadena = "INSERT INTO TB_DET_SPLIT_FOLIOSINEXIS(FECHA,FECHACAP,CVE_CAMIONETA,NOM_CAPSPLIT,TIPO,FOLIO,PROD_CLAVE,PROD_NOMBRE,TARIMA,CAJA) " +
                             "VALUES('" + DateTime.Now.ToString("dd/MM/yyyy") + "','" + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + "','" +
-                            cvecam + "','" + muser.Substring(0, 20) + "','" + mTi + "','" + mFo + "','" + mPr + "','" + mNo + "','" + mTa + "','" + mCa + "')";
+                            cvecam + "','" + NombreCapturista() + "','" + mTi + "','" + mFo + "','" + mPr + "','" + mNo + "','" + mTa + "','" + mCa + "')";
             //MessageBox.Show(cadena);
             SqlCommand cmd = new SqlCommand(cadena, thisConnection);
             cmd.ExecuteNonQuery();
@@ -1291,72 +1352,98 @@ namespace SplitCamionetas
 
         private string traediafecad(string fecha, string tipo)
         {
-            fecha = fecha.Trim();
+            fecha = (fecha ?? "").Trim();
             string Cad = "|";
-            int pos = 0;
-            if (fecha.Trim().Length > 0)
+            try
             {
+                if (fecha.Length > 0)
+                {
                 if (tipo == "PTP")
                 {
-                    pos = fecha.Trim().IndexOf("FC");
+                    int pos = fecha.IndexOf("FC");
                     Cad = fecha.Substring(pos + 5, 2);
-                    //Cad = fecha.Substring(fecha.Length - 3, 2);
                 }
                 else
                 {
                     Cad = fecha.Substring(0, 2);
                 }
-
+                }
+            }
+            catch (System.Exception)
+            {
+                // Formato de fecha inesperado: se conserva el valor por defecto
+                Cad = "|";
             }
             return Cad;
         }
 
         private string traemesfecad(string fecha, string tipo)
         {
-            fecha = fecha.Trim();
-            int pos = 0;
+            fecha = (fecha ?? "").Trim();
             string Cad = "|";
-            if (fecha.Trim().Length > 0)
+            try
             {
-
+                if (fecha.Length > 0)
+                {
                 if (tipo == "PTP")
                 {
-                    pos = fecha.Trim().IndexOf("FC");
+                    int pos = fecha.IndexOf("FC");
                     Cad = fecha.Substring(pos + 2, 3);
-                    //Cad = fecha.Substring(fecha.Length - 6, 3);
                 }
                 else
                 {
                     Cad = traemes(Convert.ToInt32(fecha.Substring(3, 2)));
                 }
+                }
+            }
+            catch (System.Exception)
+            {
+                // Formato de fecha inesperado: se conserva el valor por defecto
+                Cad = "|";
             }
             return Cad;
         }
 
         private string traediafecadrec(string fecha, string tipo)
         {
-            fecha = fecha.Trim();
+            fecha = (fecha ?? "").Trim();
             string Cad = " | ";
-            if (fecha.Trim().Length > 0)
+            try
             {
+                if (fecha.Length > 0)
+                {
                 if (tipo == "PTP")
                     Cad = fecha.Substring(fecha.Length - 2, 2);
                 else
                     Cad = fecha.Substring(0, 2);
+                }
+            }
+            catch (System.Exception)
+            {
+                // Formato de fecha inesperado: se conserva el valor por defecto
+                Cad = " | ";
             }
             return Cad;
         }
 
         private string traemesfecadrec(string fecha, string tipo)
         {
-            fecha = fecha.Trim();
+            fecha = (fecha ?? "").Trim();
             string Cad = " | ";
-            if (fecha.Trim().Length > 0)
+            try
             {
+                if (fecha.Length > 0)
+                {
                 if (tipo == "PTP")
                     Cad = traemes(Convert.ToInt32(fecha.Substring(fecha.Length - 4, 2)));
                 else
                     Cad = traemes(Convert.ToInt32(fecha.Substring(3, 2)));
+                }
+            }
+            catch (System.Exception)
+            {
+                // Formato de fecha inesperado: se conserva el valor por defecto
+                Cad = " | ";
             }
             return Cad;
         }
@@ -1428,10 +1515,10 @@ namespace SplitCamionetas
                     string Cadena = "Select Count(fecha) AS Total From Tb_Det_Etiqueta_Presplit " +
                                     "Where Eti_Recibo = '" + row["recibo"].ToString().Trim() + "' AND Eti_Producto = '" + captu.Codigo.Trim() + "' AND Eti_TarIni = '" + Convert.ToInt32(row["tarima"].ToString().Trim()) + "' AND Estatus = 'A'";
 
-                    thisConnection.Open();
+                    AbreConexion();
                     SqlCommand cmd = new SqlCommand(Cadena, thisConnection);
                     int TotalLeido = Convert.ToInt32(cmd.ExecuteScalar());
-                    thisConnection.Close();
+                    CierraConexion();
 
                     row["disponible"] = Convert.ToInt32(row["disponible"].ToString().Trim()) - TotalLeido;
 
@@ -1593,18 +1680,18 @@ namespace SplitCamionetas
             };
             buttonaceptar.Click += delegate
             {
-                thisConnection.Open();
+                AbreConexion();
                 string cadena = "Select usuario,password From tb_Autoriza_OdeP Where password = '" + password.Text.Trim() + "' AND clave = 'EM'";
                 SqlCommand cmd = new SqlCommand(cadena, thisConnection);
                 mAutoriza = Convert.ToString(cmd.ExecuteScalar());
                 if (mAutoriza.Trim().Length == 0)
                 {
                     Toast.MakeText(this, "PASSWORD INCORRECTO!!!", ToastLength.Short).Show();
-                    thisConnection.Close();
+                    CierraConexion();
                 }
                 else
                 {
-                    thisConnection.Close();
+                    CierraConexion();
 
                     AutoPed = "S";
                     Guardar.Enabled = true;
@@ -1634,18 +1721,18 @@ namespace SplitCamionetas
             titulo.Text = "Autorizacion Folios Adelantados";
             buttonaceptar.Click += delegate
             {
-                thisConnection.Open();
+                AbreConexion();
                 string cadena = "Select usuario,password From tb_Autoriza_OdeP Where password = '" + password.Text.Trim() + "' AND clave = 'EM'";
                 SqlCommand cmd = new SqlCommand(cadena, thisConnection);
                 mAutoriza = Convert.ToString(cmd.ExecuteScalar());
                 if (mAutoriza.Trim().Length == 0)
                 {
                     Toast.MakeText(this, "PASSWORD INCORRECTO!!!", ToastLength.Short).Show();
-                    thisConnection.Close();
+                    CierraConexion();
                 }
                 else
                 {
-                    thisConnection.Close();
+                    CierraConexion();
                     Guardar.Enabled = true;
                     builder.Dismiss();
                 }
@@ -1734,7 +1821,7 @@ namespace SplitCamionetas
         void insertarinfo()
         {
             dondegenera = "inserinfo";
-            thisConnection.Open();
+            AbreConexion();
             var pedidoscapturados = db.Table<Pedidos>();
             foreach (var captu in pedidoscapturados)
             {
@@ -1771,7 +1858,7 @@ namespace SplitCamionetas
                 cmd.ExecuteNonQuery();
             }
 
-            thisConnection.Close();
+            CierraConexion();
 
             veces++;
         }
@@ -1788,7 +1875,7 @@ namespace SplitCamionetas
 
         private void ConsPedSur(string mped)
         {
-            thisConnection.Open();
+            AbreConexion();
             string cadena = "Select prod_clave as Codigo, nom_prod as Nombre, cant_ped as Pedido, 0 as Surtido from tb_ped_embarque Where emb_folio = '" + mped.Trim() + "' Order by nom_prod";
             SqlDataAdapter da = new SqlDataAdapter(cadena, thisConnection);
             DataSet ds = new DataSet();
@@ -1801,7 +1888,7 @@ namespace SplitCamionetas
             da.Fill(ds, "PedSur");
             var PedSur = ds.Tables["PedSur"];
             int Cp = 0, Cs = 0, sur = 0;
-            thisConnection.Close();
+            CierraConexion();
             foreach (DataRow Row in ConsPed.Rows)
             {
                 sur = 0;
@@ -1821,7 +1908,7 @@ namespace SplitCamionetas
         private void ConsPedSurdos(string mped)
         {
             db.Query<ConPedidos>("UPDATE [ConPedidos] SET surtido = 0");
-            thisConnection.Open();
+            AbreConexion();
 
 
             string Cadena = "Select SUM(a.pdn_num_unidades) AS Pedidos From tb_det_pedidos A, tb_Cat_producto B " +
@@ -1854,7 +1941,7 @@ namespace SplitCamionetas
             da.Fill(ds, "PedSur");
             var PedSur = ds.Tables["PedSur"];
             int Cp = 0, Cs = 0, sur = 0;
-            thisConnection.Close();
+            CierraConexion();
             foreach (DataRow Row in ConsPed.Rows)
             {
                 sur = 0;
@@ -1956,6 +2043,12 @@ namespace SplitCamionetas
 
         void ITextWatcher.OnTextChanged(ICharSequence s, int start, int before, int count)
         {
+            if (Procesando)
+            {
+                Toast.MakeText(this, "Procesando, espere un momento antes de leer otra etiqueta", ToastLength.Short).Show();
+                return;
+            }
+
             if (mconcen == "2")
             {
                 Android.App.AlertDialog.Builder alertDialog = new Android.App.AlertDialog.Builder(this);
@@ -2208,22 +2301,22 @@ namespace SplitCamionetas
             DataTable Foliosleidos = new DataTable();
             string CadenaFolios = "Select Eti_Lectura, fecha_cap From tb_Det_Etiqueta " +
                            "WHERE (Eti_Producto = '" + mcod + "') AND (Eti_Recibo = '" + mfol + "') AND (Eti_TarIni = '" + mtar + "')";
-            thisConnection.Open();
+            AbreConexion();
             SqlDataAdapter da = new SqlDataAdapter(CadenaFolios, thisConnection);
             DataSet ds = new DataSet();
             da.Fill(ds, "Foliosleidos");
             Foliosleidos = ds.Tables["Foliosleidos"];
-            thisConnection.Close();
+            CierraConexion();
 
             DataTable FoliosleidosPresplit = new DataTable();
             string CadenaFoliospreesplit = "Select Eti_Lectura, fecha_cap From tb_Det_Etiqueta " +
                            "WHERE (Eti_Producto = '" + mcod + "') AND (Eti_Recibo = '" + mfol + "') AND (Eti_TarIni = '" + mtar + "')";
-            thisConnection.Open();
+            AbreConexion();
             SqlDataAdapter dapre = new SqlDataAdapter(CadenaFoliospreesplit, thisConnection);
             DataSet dspre = new DataSet();
             dapre.Fill(dspre, "FoliosleidosPresplit");
             FoliosleidosPresplit = dspre.Tables["FoliosleidosPresplit"];
-            thisConnection.Close();
+            CierraConexion();
 
             string cadenatarimacompleta = "";
 
@@ -2239,11 +2332,11 @@ namespace SplitCamionetas
                  "AND TIPO = '" + mtip + "' AND TARIMA = '" + Convert.ToInt32(mtar.Trim()).ToString() + "' ";
             }
 
-            thisConnection.Open();
+            AbreConexion();
             SqlCommand cmd = new SqlCommand(cadenatarimacompleta, thisConnection);
             int disponible = Convert.ToInt32(cmd.ExecuteScalar());
 
-            thisConnection.Close();
+            CierraConexion();
 
 
 
@@ -2271,10 +2364,10 @@ namespace SplitCamionetas
                     mcaj = mcaj.Trim();
 
                     string lectura = mtip + mfol + mcod + mtar + mcaj;
-                    thisConnection.Open();
+                    AbreConexion();
                     string fechacap = ValidaCajaEtiVerde(lectura, Foliosleidos).Trim();
                     string fechacappre = ValidaCajaPreesplitVerde(lectura, FoliosleidosPresplit).Trim();
-                    thisConnection.Close();
+                    CierraConexion();
                     if (fechacap.Length > 0)
                     {
                         cajaactual++;
@@ -2387,7 +2480,7 @@ namespace SplitCamionetas
                     pti_famous = foliocaptura.Text.TrimStart('0');
                 }
 
-                if (thisConnection.State == ConnectionState.Closed) { thisConnection.Open(); }
+                if (thisConnection.State == ConnectionState.Closed) { AbreConexion(); }
                 string querySSCC = "select*from tb_det_trazabilidad where pti_famous='" + pti_famous + "'";
                 SqlCommand sqlCommand = new SqlCommand(querySSCC);
                 sqlCommand.Connection = thisConnection;
@@ -2401,14 +2494,14 @@ namespace SplitCamionetas
                     mtip = sqlDataReader["tipo"].ToString().Trim();
                     mEtiqueta = sqlDataReader["etiqueta"].ToString().Trim();
                 }
-                if (thisConnection.State == ConnectionState.Open) { thisConnection.Close(); }
+                if (thisConnection.State == ConnectionState.Open) { CierraConexion(); }
             }
             else if (foliocaptura.Text.Contains(SerialShippingContainerCode) == true)
             {
                 Match match = Regex.Match(foliocaptura.Text, patron);
                 id_pallet = match.Groups[1].Value;
 
-                if (thisConnection.State == ConnectionState.Closed) { thisConnection.Open(); }
+                if (thisConnection.State == ConnectionState.Closed) { AbreConexion(); }
                 string querySSCC = "select*from tb_det_trazabilidad where id_Pallet='" + id_pallet + "'";
                 SqlCommand sqlCommand = new SqlCommand(querySSCC);
                 sqlCommand.Connection = thisConnection;
@@ -2422,11 +2515,11 @@ namespace SplitCamionetas
                     mtip = sqlDataReader["tipo"].ToString().Trim();
                     mEtiqueta = sqlDataReader["etiqueta"].ToString().Trim();
                 }
-                if (thisConnection.State == ConnectionState.Open) { thisConnection.Close(); }
+                if (thisConnection.State == ConnectionState.Open) { CierraConexion(); }
             }
             else if (!Regex.IsMatch(foliocaptura.Text.Trim(), @"\s"))
             {
-                if (thisConnection.State == ConnectionState.Closed) { thisConnection.Open(); }
+                if (thisConnection.State == ConnectionState.Closed) { AbreConexion(); }
                 string querySSCC = "select*from tb_det_trazabilidad where pti_clave='" + foliocaptura.Text.Trim() + "'";
                 SqlCommand sqlCommand = new SqlCommand(querySSCC);
                 sqlCommand.Connection = thisConnection;
@@ -2440,7 +2533,7 @@ namespace SplitCamionetas
                     mtip = sqlDataReader["tipo"].ToString().Trim();
                     mEtiqueta = sqlDataReader["etiqueta"].ToString().Trim();
                 }
-                if (thisConnection.State == ConnectionState.Open) { thisConnection.Close(); }
+                if (thisConnection.State == ConnectionState.Open) { CierraConexion(); }
             }
             else if (foliocaptura.Text.Trim().Contains(" ") == true)
             {
@@ -2542,24 +2635,24 @@ namespace SplitCamionetas
 
             string CadenaFolios = "Select Eti_Lectura, fecha_cap From tb_Det_Etiqueta " +
                                    "WHERE (Eti_Producto = '" + mcod + "') AND (Eti_Recibo = '" + mfol + "') AND (Eti_TarIni = " + Convert.ToInt32(mtar) + ") AND Estatus = 'A'";
-            if (thisConnection.State == ConnectionState.Closed) { thisConnection.Open(); }
+            if (thisConnection.State == ConnectionState.Closed) { AbreConexion(); }
             SqlDataAdapter da = new SqlDataAdapter(CadenaFolios, thisConnection);
             DataSet ds = new DataSet();
             da.Fill(ds, "Foliosleidos");
 
 
             Foliosleidos = ds.Tables["Foliosleidos"];
-            thisConnection.Close();
+            CierraConexion();
 
 
             string CadenaFoliospreesplit = "Select Eti_Lectura, fecha_cap From Tb_Det_Etiqueta_Presplit " +
                            "WHERE (Eti_Producto = '" + mcod + "') AND (Eti_Recibo = '" + mfol + "') AND (Eti_TarIni = " + Convert.ToInt32(mtar) + ") AND Estatus IN ('A', 'S')";
-            thisConnection.Open();
+            AbreConexion();
             SqlDataAdapter dapre = new SqlDataAdapter(CadenaFoliospreesplit, thisConnection);
             DataSet dspre = new DataSet();
             dapre.Fill(dspre, "FoliosleidosPresplit");
             FoliosleidosPresplit = dspre.Tables["FoliosleidosPresplit"];
-            thisConnection.Close();
+            CierraConexion();
 
             string cadenatarimacompleta = "";
 
@@ -2575,19 +2668,19 @@ namespace SplitCamionetas
                  "AND TIPO = '" + mtip + "' AND TARIMA = '" + Convert.ToInt32(mtar.Trim()).ToString() + "' ";
             }
 
-            thisConnection.Open();
+            AbreConexion();
             SqlCommand cmd = new SqlCommand(cadenatarimacompleta, thisConnection);
             int disponible = Convert.ToInt32(cmd.ExecuteScalar());
 
-            thisConnection.Close();
+            CierraConexion();
 
             //string strEti_Lectura = "SELECT COUNT(*) as Eti_Lectura FROM (SELECT Eti_Lectura FROM tb_Det_Etiqueta WHERE Eti_Producto = '" + mcod.Trim() + "' AND Eti_Recibo = '" + mfol.Trim() + "' AND Eti_TarIni = '" + Convert.ToInt32(mtar.Trim()).ToString() + "' AND Estatus = 'A' UNION SELECT Eti_Lectura FROM Tb_Det_Etiqueta_Presplit WHERE Eti_Producto = '" + mcod.Trim() + "' AND Eti_Recibo = '" + mfol.Trim() + "' AND Eti_TarIni = '" + Convert.ToInt32(mtar.Trim()).ToString() + "' AND Estatus IN ('A', 'S')) AS Eti_Lectura\r\n";
             string strEti_Lectura = "SELECT sum(CAJA) AS CAJAS FROM (SELECT COUNT(Eti_Lectura) AS CAJA FROM tb_Det_Etiqueta WHERE Eti_Producto = '" + mcod.Trim() + "' AND Eti_Recibo = '" + mfol.Trim() + "' AND Eti_TarIni = " + Convert.ToInt32(mtar.Trim()) + " AND Estatus = 'A' UNION ALL SELECT COUNT(Eti_Lectura) as caja FROM Tb_Det_Etiqueta_Presplit WHERE Eti_Producto = '" + mcod.Trim() + "' AND Eti_Recibo = '" + mfol.Trim() + "' AND Eti_TarIni = " + Convert.ToInt32(mtar.Trim()) + " AND Estatus = 'S' UNION ALL SELECT SUM(cajas) as caja FROM tb_det_split WHERE prod_clave = '" + mcod.Trim() + "' AND no_lote = '" + mfol.Trim() + "' AND TARINI = '" + mtar + "' AND Estatus = 'A')   AS Eti_Lectura";
-            thisConnection.Open();
+            AbreConexion();
             SqlCommand cmdEti_Lectura = new SqlCommand(strEti_Lectura, thisConnection);
             int totalEti_Lectura = Convert.ToInt32(cmdEti_Lectura.ExecuteScalar());
 
-            thisConnection.Close();
+            CierraConexion();
 
 
 
@@ -2623,10 +2716,10 @@ namespace SplitCamionetas
 
                     string lectura = mtip + mfol + mcod + mtar + mcaj;
                     //string lectura = Btip + captura;
-                    thisConnection.Open();
+                    AbreConexion();
                     string fechacap = ValidaCajaEtiVerde(lectura, Foliosleidos).Trim();
                     //string fechacappre = ValidaCajaPreesplitVerde(lectura, FoliosleidosPresplit).Trim();
-                    thisConnection.Close();
+                    CierraConexion();
                     if (fechacap.Length > 0)
                     {
                         cajaactual++;
@@ -3046,11 +3139,11 @@ namespace SplitCamionetas
                     string Cadena = "Select Count(fecha) AS Total From Tb_Det_Etiqueta_Presplit " +
                                     "Where Eti_Recibo = '" + row["recibo"].ToString().Trim() + "' AND Eti_Producto = '" + captu.Codigo.Trim() + "' AND Eti_TarIni = '" + Convert.ToInt32(row["tarima"].ToString().Trim()) + "' AND Estatus = 'A'";
 
-                    thisConnection.Open();
+                    AbreConexion();
                     SqlCommand cmd = new SqlCommand(Cadena, thisConnection);
                     int TotalLeido = Convert.ToInt32(cmd.ExecuteScalar());
                     int usadasant = 0;
-                    thisConnection.Close();
+                    CierraConexion();
 
                     row["disponible"] = Convert.ToInt32(row["disponible"].ToString().Trim()) - TotalLeido;
 
@@ -3148,18 +3241,18 @@ namespace SplitCamionetas
         {
             //nombre_recibido = et.Text.Trim().ToUpper();
 
-            thisConnection.Open();
+            AbreConexion();
             string cadena = "Select usuario,password From tb_Autoriza_OdeP Where password = '" + et.Text.Trim().ToUpper() + "' AND clave = 'EM' AND obs = 'Autoriza Caducidad Camionetas'";
             SqlCommand cmd = new SqlCommand(cadena, thisConnection);
             mAutoriza = Convert.ToString(cmd.ExecuteScalar());
             if (mAutoriza.Trim().Length == 0)
             {
                 Toast.MakeText(this, "PASSWORD INCORRECTO!!!", ToastLength.Short).Show();
-                thisConnection.Close();
+                CierraConexion();
             }
             else
             {
-                thisConnection.Close();
+                CierraConexion();
                 AutoPed = "S";
                 Guardar.Enabled = true;
                 return;
