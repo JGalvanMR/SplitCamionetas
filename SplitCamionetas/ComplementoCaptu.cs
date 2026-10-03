@@ -136,6 +136,13 @@ namespace SplitCamionetas
             Guardar.Click += BtnGuardar_Click;
             Guardar.Enabled = false;
 
+            // La carga inicial consulta SQL Server: se hace en segundo plano para no bloquear la pantalla (ANR)
+            Procesando = true;
+            var cargando = ProgressDialog.Show(this, "Espere Por Favor...", "Cargando informacion...", true);
+            new System.Threading.Thread(new ThreadStart(delegate
+            {
+                try
+                {
             AbreConexion();
             string cadena = "Select prod_clave,prod_nombre from tb_cat_producto where estatus = 'A' AND (prod_tipo = 'PTP' OR prod_tipo = 'PTC')  order by LEN(prod_clave) DESC";
             //string cadena = "Select prod_clave,prod_nombre from tb_cat_producto where prod_tipo in ( 'PTP', 'PTC') and estatus='A' and len(prod_clave) >= 9 order by LEN(prod_clave) DESC";
@@ -148,8 +155,13 @@ namespace SplitCamionetas
             var quex = db.Table<Pedidos>();
             foreach (var captu in quex)
             {
-                nosplit.Text = "Split Numero: " + NoSplit(captu.folio.ToString());
-                pedidoencaptura.Text = "Pedido Actual: " + captu.folio.ToString();
+                string splitNum = NoSplit(captu.folio.ToString());
+                string pedAct = captu.folio.ToString();
+                RunOnUiThread(() =>
+                {
+                    if (nosplit != null) nosplit.Text = "Split Numero: " + splitNum;
+                    if (pedidoencaptura != null) pedidoencaptura.Text = "Pedido Actual: " + pedAct;
+                });
             }
 
             //tERMINA TRAER NUMERO DE SPLIT
@@ -171,6 +183,20 @@ namespace SplitCamionetas
             cmnd.CommandText = "select sts_reetiquetado from Tb_Reetiquetadohabilitar";
             Desactivarhabilitarreimprimir = Convert.ToInt32(cmnd.ExecuteScalar());
             CierraConexion();
+                    CatalogoListo = true;
+                }
+                catch (System.Exception exCarga)
+                {
+                    CierraConexion();
+                    RunOnUiThread(() => Toast.MakeText(this, "No fue posible cargar la informacion, verifique la conexion e ingrese de nuevo a la pantalla", ToastLength.Long).Show());
+                    new System.Threading.Thread(() => SendMail("jgalvan@mrlucky.com.mx", "Error generado en la carga inicial SPLIT CAMIONETAS " + exCarga, "Error En la Carga Inicial")).Start();
+                }
+                finally
+                {
+                    Procesando = false;
+                    RunOnUiThread(() => cargando.Dismiss());
+                }
+            })).Start();
 
 
             //****************************************Inicio Lectura de QR**************************************************************************************
@@ -870,6 +896,38 @@ namespace SplitCamionetas
             return n.Length > 20 ? n.Substring(0, 20) : n;
         }
 
+        // Cajas ya leidas en presplit por recibo/tarima para un producto (1 consulta en lugar de 1 por tarima)
+        private Dictionary<string, int> PresplitLeidos(string producto)
+        {
+            var d = new Dictionary<string, int>();
+            AbreConexion();
+            try
+            {
+                string sql = "Select Eti_Recibo, Eti_TarIni, Count(fecha) AS Total From Tb_Det_Etiqueta_Presplit " +
+                             "Where Eti_Producto = '" + producto + "' AND Estatus = 'A' Group By Eti_Recibo, Eti_TarIni";
+                using (var cmdPre = new SqlCommand(sql, thisConnection))
+                using (var rd = cmdPre.ExecuteReader())
+                {
+                    while (rd.Read())
+                    {
+                        int tar;
+                        if (!int.TryParse(rd["Eti_TarIni"].ToString().Trim(), out tar)) continue;
+                        string key = rd["Eti_Recibo"].ToString().Trim() + "|" + tar;
+                        int actual;
+                        d.TryGetValue(key, out actual);
+                        d[key] = actual + Convert.ToInt32(rd["Total"]);
+                    }
+                }
+            }
+            finally
+            {
+                CierraConexion();
+            }
+            return d;
+        }
+
+        private bool CatalogoListo = false;
+
         private void LoadConnection()
         {
             string folder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
@@ -1454,6 +1512,7 @@ namespace SplitCamionetas
             string Valor = "";
             //Obtener los productos con su tipo de lo que se ha leido******************************************************************
             var productoscapturados = db.Query<xLote>("Select Tipo, Codigo, nombre FROM xLote GROUP BY Tipo, Codigo, nombre");
+            var cachePresplit = new Dictionary<string, Dictionary<string, int>>();
             db.Query<XLoteSug>("delete from[XLoteSug]");
 
             var allItems = db.Table<xLote>().ToList();
@@ -1512,12 +1571,14 @@ namespace SplitCamionetas
                 foreach (DataRow row in xlote.Rows)
                 {
 
-                    string Cadena = "Select Count(fecha) AS Total From Tb_Det_Etiqueta_Presplit " +
-                                    "Where Eti_Recibo = '" + row["recibo"].ToString().Trim() + "' AND Eti_Producto = '" + captu.Codigo.Trim() + "' AND Eti_TarIni = '" + Convert.ToInt32(row["tarima"].ToString().Trim()) + "' AND Estatus = 'A'";
-
-                    AbreConexion();
-                    SqlCommand cmd = new SqlCommand(Cadena, thisConnection);
-                    int TotalLeido = Convert.ToInt32(cmd.ExecuteScalar());
+                    Dictionary<string, int> leidosPre;
+                    if (!cachePresplit.TryGetValue(captu.Codigo.Trim(), out leidosPre))
+                    {
+                        leidosPre = PresplitLeidos(captu.Codigo.Trim());
+                        cachePresplit[captu.Codigo.Trim()] = leidosPre;
+                    }
+                    int TotalLeido;
+                    leidosPre.TryGetValue(row["recibo"].ToString().Trim() + "|" + Convert.ToInt32(row["tarima"].ToString().Trim()), out TotalLeido);
                     CierraConexion();
 
                     row["disponible"] = Convert.ToInt32(row["disponible"].ToString().Trim()) - TotalLeido;
@@ -2043,6 +2104,12 @@ namespace SplitCamionetas
 
         void ITextWatcher.OnTextChanged(ICharSequence s, int start, int before, int count)
         {
+            if (!CatalogoListo)
+            {
+                Toast.MakeText(this, "Cargando informacion, espere un momento", ToastLength.Short).Show();
+                return;
+            }
+
             if (Procesando)
             {
                 Toast.MakeText(this, "Procesando, espere un momento antes de leer otra etiqueta", ToastLength.Short).Show();
@@ -3060,6 +3127,7 @@ namespace SplitCamionetas
             ValiFechacad = "S";
             //Obtener los productos con su tipo de lo que se ha leido******************************************************************
             var productoscapturados = db.Query<xLote>("Select Tipo, Codigo, nombre FROM xLote GROUP BY Tipo, Codigo, nombre");
+            var cachePresplit = new Dictionary<string, Dictionary<string, int>>();
             db.Query<XLoteSug>("delete from[XLoteSug]");
 
             var allItems = db.Table<xLote>().ToList();
@@ -3136,12 +3204,14 @@ namespace SplitCamionetas
                 foreach (DataRow row in xlote.Rows)
                 {
                     int total_prod_simula = totalprodsimulado;
-                    string Cadena = "Select Count(fecha) AS Total From Tb_Det_Etiqueta_Presplit " +
-                                    "Where Eti_Recibo = '" + row["recibo"].ToString().Trim() + "' AND Eti_Producto = '" + captu.Codigo.Trim() + "' AND Eti_TarIni = '" + Convert.ToInt32(row["tarima"].ToString().Trim()) + "' AND Estatus = 'A'";
-
-                    AbreConexion();
-                    SqlCommand cmd = new SqlCommand(Cadena, thisConnection);
-                    int TotalLeido = Convert.ToInt32(cmd.ExecuteScalar());
+                    Dictionary<string, int> leidosPre;
+                    if (!cachePresplit.TryGetValue(captu.Codigo.Trim(), out leidosPre))
+                    {
+                        leidosPre = PresplitLeidos(captu.Codigo.Trim());
+                        cachePresplit[captu.Codigo.Trim()] = leidosPre;
+                    }
+                    int TotalLeido;
+                    leidosPre.TryGetValue(row["recibo"].ToString().Trim() + "|" + Convert.ToInt32(row["tarima"].ToString().Trim()), out TotalLeido);
                     int usadasant = 0;
                     CierraConexion();
 
