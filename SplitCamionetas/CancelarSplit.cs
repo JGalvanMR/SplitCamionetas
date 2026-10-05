@@ -451,8 +451,9 @@ namespace SplitCamionetas
             Android.Telephony.TelephonyManager telephonyManager;
             telephonyManager = (Android.Telephony.TelephonyManager)GetSystemService(TelephonyService);
             //string deviceid=telephonyManager.DeviceId;
-            string deviceid = CrossDeviceInfo.Current.Id;
-            return deviceid;
+            string deviceid = CrossDeviceInfo.Current.Id ?? "";
+            // Las columnas Imei de SQL Server son varchar(15); el Id de Plugin.DeviceInfo (ANDROID_ID) trae 16 caracteres
+            return deviceid.Length > 15 ? deviceid.Substring(0, 15) : deviceid;
         }
 
     }
