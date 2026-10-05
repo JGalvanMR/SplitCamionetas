@@ -184,6 +184,11 @@ namespace SplitCamionetas
             Desactivarhabilitarreimprimir = Convert.ToInt32(cmnd.ExecuteScalar());
             CierraConexion();
                     CatalogoListo = true;
+                    // Refresca la cuadricula: los nombres de producto no estaban disponibles al crear la pantalla
+                    RunOnUiThread(() =>
+                    {
+                        var gv = FindViewById<GridView>(Resource.Id.gvCtr2com);
+                        if (gv != null) gv.Adapter = new myGVItemAdapter(this, productocapturado());
                     RunOnUiThread(() =>
                     {
                         // Las etiquetas ya capturadas se pintaron antes de tener el catalogo: se refresca con los nombres
@@ -196,6 +201,7 @@ namespace SplitCamionetas
                 }
                 catch (System.Exception exCarga)
                 {
+                    Android.Util.Log.Error("SPLIT_CARGA", exCarga.ToString());
                     CierraConexion();
                     RunOnUiThread(() => Toast.MakeText(this, "No fue posible cargar la informacion, verifique la conexion e ingrese de nuevo a la pantalla", ToastLength.Long).Show());
                     new System.Threading.Thread(() => SendMail("jgalvan@mrlucky.com.mx", "Error generado en la carga inicial SPLIT CAMIONETAS " + exCarga, "Error En la Carga Inicial")).Start();
@@ -419,6 +425,7 @@ namespace SplitCamionetas
                 {
                     CierraConexion();
                     string errorGuardar = exGuardar.ToString();
+                    Android.Util.Log.Error("SPLIT_GUARDAR", errorGuardar);
 
                     Android.App.AlertDialog.Builder alertError = new Android.App.AlertDialog.Builder(this);
                     alertError.SetTitle(Html.FromHtml("<font color='#B71C1C' size = 10>Error en el Guardado</font>"));
@@ -696,6 +703,7 @@ namespace SplitCamionetas
 
                     catch (System.Exception ex)
                     {
+                        Android.Util.Log.Error("SPLIT_VALIDAR", dondegenera + " :: " + ex);
                         CierraConexion();
                         Procesando = false;
                         if (wakeLock.IsHeld) wakeLock.Release();
@@ -1647,6 +1655,10 @@ namespace SplitCamionetas
         private string traenom(string cve)
         {
             string nom = "";
+            // El catalogo se carga en segundo plano: mientras no este listo no tiene columnas
+            if (!CatProd.Columns.Contains("prod_clave")) return nom;
+            foreach (DataRow row in CatProd.Select("prod_clave = '" + cve + "'"))
+                nom = row["prod_nombre"].ToString().Trim();
             // El catalogo se carga en segundo plano: mientras no este listo no hay nombre que buscar
             if (CatProd != null && CatProd.Columns.Contains("prod_clave"))
             {
@@ -3654,8 +3666,9 @@ namespace SplitCamionetas
             Android.Telephony.TelephonyManager telephonyManager;
             telephonyManager = (Android.Telephony.TelephonyManager)GetSystemService(TelephonyService);
             //string deviceid=telephonyManager.DeviceId;
-            string deviceid = CrossDeviceInfo.Current.Id;
-            return deviceid;
+            string deviceid = CrossDeviceInfo.Current.Id ?? "";
+            // Las columnas Imei de SQL Server son varchar(15); el Id de Plugin.DeviceInfo (ANDROID_ID) trae 16 caracteres
+            return deviceid.Length > 15 ? deviceid.Substring(0, 15) : deviceid;
         }
     }
 }
