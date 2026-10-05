@@ -184,11 +184,6 @@ namespace SplitCamionetas
             Desactivarhabilitarreimprimir = Convert.ToInt32(cmnd.ExecuteScalar());
             CierraConexion();
                     CatalogoListo = true;
-                    // Refresca la cuadricula: los nombres de producto no estaban disponibles al crear la pantalla
-                    RunOnUiThread(() =>
-                    {
-                        var gv = FindViewById<GridView>(Resource.Id.gvCtr2com);
-                        if (gv != null) gv.Adapter = new myGVItemAdapter(this, productocapturado());
                     RunOnUiThread(() =>
                     {
                         // Las etiquetas ya capturadas se pintaron antes de tener el catalogo: se refresca con los nombres
@@ -1146,7 +1141,7 @@ namespace SplitCamionetas
 
                 for (int i = 0; i < lecturas.Count; i += 400)
                 {
-                    var lote = lecturas.GetRange(i, Math.Min(400, lecturas.Count - i));
+                    var lote = lecturas.GetRange(i, System.Math.Min(400, lecturas.Count - i));
                     string[] nombres = new string[lote.Count];
                     for (int k = 0; k < lote.Count; k++) nombres[k] = "@p" + k;
                     string lista = string.Join(",", nombres);
@@ -1655,10 +1650,6 @@ namespace SplitCamionetas
         private string traenom(string cve)
         {
             string nom = "";
-            // El catalogo se carga en segundo plano: mientras no este listo no tiene columnas
-            if (!CatProd.Columns.Contains("prod_clave")) return nom;
-            foreach (DataRow row in CatProd.Select("prod_clave = '" + cve + "'"))
-                nom = row["prod_nombre"].ToString().Trim();
             // El catalogo se carga en segundo plano: mientras no este listo no hay nombre que buscar
             if (CatProd != null && CatProd.Columns.Contains("prod_clave"))
             {
