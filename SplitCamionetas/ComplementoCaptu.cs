@@ -184,6 +184,15 @@ namespace SplitCamionetas
             Desactivarhabilitarreimprimir = Convert.ToInt32(cmnd.ExecuteScalar());
             CierraConexion();
                     CatalogoListo = true;
+                    RunOnUiThread(() =>
+                    {
+                        // Las etiquetas ya capturadas se pintaron antes de tener el catalogo: se refresca con los nombres
+                        TotCaj = 0;
+                        List<FlimStarInfo> lstRefresco = productocapturado();
+                        var gvRefresco = FindViewById<GridView>(Resource.Id.gvCtr2com);
+                        gvRefresco.Adapter = new myGVItemAdapter(this, lstRefresco);
+                        total.Text = TotCaj.ToString("##0");
+                    });
                 }
                 catch (System.Exception exCarga)
                 {
@@ -1106,6 +1115,74 @@ namespace SplitCamionetas
             return m.Groups[1].Value + tres[1] + tres[2] + tres[1] + tres[2];
         }
 
+        // ---- Precarga por lote para validar (en lugar de 2 consultas a SQL Server por cada caja) ----
+        private Dictionary<string, string> cacheCaja = null;
+        private Dictionary<string, string> cachePre = null;
+
+        private void PrecargaLecturas()
+        {
+            cacheCaja = null;
+            cachePre = null;
+            try
+            {
+                var lecturas = new List<string>();
+                foreach (var captu in db.Table<xprod>())
+                {
+                    string l = captu.Tipo.ToString() + captu.Folio.ToString() + captu.Codigo.ToString() + captu.Tarima.ToString() + captu.Cajas.ToString();
+                    lecturas.Add(l.TrimEnd());
+                }
+
+                var caja = new Dictionary<string, string>();
+                var pre = new Dictionary<string, string>();
+                AbreConexion();
+
+                for (int i = 0; i < lecturas.Count; i += 400)
+                {
+                    var lote = lecturas.GetRange(i, Math.Min(400, lecturas.Count - i));
+                    string[] nombres = new string[lote.Count];
+                    for (int k = 0; k < lote.Count; k++) nombres[k] = "@p" + k;
+                    string lista = string.Join(",", nombres);
+
+                    using (var cmd = new SqlCommand("SELECT A.Eti_Lectura, CONCAT(A.fecha_cap, '*', B.NOM_CAPSPLIT) AS datoscaptura From tb_Det_Etiqueta A LEFT JOIN tb_det_split B ON A.emb_folio = B.emb_folio AND A.Eti_TarIni = B.TARINI AND A.Eti_Producto = B.prod_clave AND A.Split = B.tarima Where A.Eti_Lectura IN (" + lista + ") AND A.Estatus NOT IN ('C', 'R')", thisConnection))
+                    {
+                        cmd.CommandTimeout = 60;
+                        for (int k = 0; k < lote.Count; k++) cmd.Parameters.Add(nombres[k], SqlDbType.VarChar, 100).Value = lote[k];
+                        using (var rd = cmd.ExecuteReader())
+                        {
+                            while (rd.Read())
+                            {
+                                string key = Convert.ToString(rd["Eti_Lectura"]).TrimEnd();
+                                if (!caja.ContainsKey(key)) caja[key] = Convert.ToString(rd["datoscaptura"]);
+                            }
+                        }
+                    }
+
+                    using (var cmd = new SqlCommand("SELECT Eti_Lectura, fecha_cap From Tb_Det_Etiqueta_Presplit Where Eti_Lectura IN (" + lista + ") AND Estatus = 'A'", thisConnection))
+                    {
+                        cmd.CommandTimeout = 60;
+                        for (int k = 0; k < lote.Count; k++) cmd.Parameters.Add(nombres[k], SqlDbType.VarChar, 100).Value = lote[k];
+                        using (var rd = cmd.ExecuteReader())
+                        {
+                            while (rd.Read())
+                            {
+                                string key = Convert.ToString(rd["Eti_Lectura"]).TrimEnd();
+                                if (!pre.ContainsKey(key)) pre[key] = Convert.ToString(rd["fecha_cap"]);
+                            }
+                        }
+                    }
+                }
+
+                cacheCaja = caja;
+                cachePre = pre;
+            }
+            catch (System.Exception)
+            {
+                // Si la precarga falla se usan las consultas individuales de siempre
+                cacheCaja = null;
+                cachePre = null;
+            }
+        }
+
         private void LoadConnection()
         {
             string folder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
@@ -1294,6 +1371,7 @@ namespace SplitCamionetas
             string amtip = "", amfol = "", amcod = "", amtar = "", amcaj = "", amfeccap = "";
             var conta = 0;
             var cacheInfo = new Dictionary<string, DataTable>(); // una consulta por tarima, no por caja
+            PrecargaLecturas();
             var productoscapturados = db.Table<xprod>();
             foreach (var captu in productoscapturados)
             {
@@ -1511,6 +1589,8 @@ namespace SplitCamionetas
             //gvObject.ItemClick += new EventHandler<AdapterView.ItemClickEventArgs>(OnGridView_ItemClicked); //detalle_pedido
 
 
+            cacheCaja = null;
+            cachePre = null;
             RunOnUiThread(() => total.Text = totok.ToString("##0"));
             return ok;
         }
@@ -1520,8 +1600,17 @@ namespace SplitCamionetas
             /*string Cadena = "Select fecha_cap From tb_Det_Etiqueta " +
                            "Where Eti_Lectura = '" + cadena + "' AND Estatus != 'C'";*/
             string Cadena = "Select CONCAT(A.fecha_cap, '*', B.NOM_CAPSPLIT) AS datoscaptura From tb_Det_Etiqueta A LEFT JOIN tb_det_split B ON A.emb_folio = B.emb_folio AND A.Eti_TarIni = B.TARINI AND A.Eti_Producto = B.prod_clave AND A.Split = B.tarima Where A.Eti_Lectura = '" + cadena + "' AND A.Estatus NOT IN ('C', 'R')";
-            SqlCommand cmd = new SqlCommand(Cadena, thisConnection);
-            string Valor = Convert.ToString(cmd.ExecuteScalar());
+            SqlCommand cmd;
+            string Valor;
+            if (cacheCaja != null)
+            {
+                if (!cacheCaja.TryGetValue(cadena.TrimEnd(), out Valor)) Valor = "";
+            }
+            else
+            {
+                cmd = new SqlCommand(Cadena, thisConnection);
+                Valor = Convert.ToString(cmd.ExecuteScalar());
+            }
             string[] valores = Valor.Split('*');
             Valor = "";
             if ((valores[0].ToString().Trim().Length > 0) && (valores[1].ToString().Trim().Length == 0))
@@ -1558,8 +1647,12 @@ namespace SplitCamionetas
         private string traenom(string cve)
         {
             string nom = "";
-            foreach (DataRow row in CatProd.Select("prod_clave = '" + cve + "'"))
-                nom = row["prod_nombre"].ToString().Trim();
+            // El catalogo se carga en segundo plano: mientras no este listo no hay nombre que buscar
+            if (CatProd != null && CatProd.Columns.Contains("prod_clave"))
+            {
+                foreach (DataRow row in CatProd.Select("prod_clave = '" + cve + "'"))
+                    nom = row["prod_nombre"].ToString().Trim();
+            }
 
             nom = nom.Replace("'", " ");
             return nom;
@@ -2263,6 +2356,11 @@ namespace SplitCamionetas
         }
         private string ValidaCajaPreesplit(string cadena)
         {
+            if (cachePre != null)
+            {
+                string previo;
+                return cachePre.TryGetValue(cadena.Trim().TrimEnd(), out previo) ? previo : "";
+            }
             string Cadena = "Select fecha_cap From Tb_Det_Etiqueta_Presplit " +
                           "Where Eti_Lectura = '" + cadena + "' AND Estatus = 'A'";
             SqlCommand cmd = new SqlCommand(Cadena, thisConnection);
