@@ -418,8 +418,11 @@ namespace SplitCamionetas
                             else
                                 cadena = "UPDATE TB_DET_ETI_FINAL SET CAJAS_SUR = CAJAS_SUR + " + lotes.Cajas.ToString() + " WHERE CVE_PROD = '" + lotes.Codigo.ToString() + "' AND FOLIO = '" + lotes.Folio.ToString() + "' " +
                                     "AND TARIMA = '" + Convert.ToInt32(lotes.Tarima).ToString() + "' ";
+                            int surtidoAntes = LeeSurtidoActual(lotes.Tipo.ToString(), lotes.Codigo.ToString(), lotes.Folio.ToString(), lotes.Tarima.ToString());
                             cmd = new SqlCommand(cadena, thisConnection);
                             cmd.ExecuteNonQuery();
+                            int surtidoDespues = LeeSurtidoActual(lotes.Tipo.ToString(), lotes.Codigo.ToString(), lotes.Folio.ToString(), lotes.Tarima.ToString());
+                            RegistraBitacoraSurtido(lotes.Tipo.ToString(), lotes.Folio.ToString(), lotes.Codigo.ToString(), lotes.Tarima.ToString(), lotes.Pedido.ToString(), Convert.ToInt32(lotes.Cajas), surtidoAntes, surtidoDespues, "CAPTURAR");
                         }
                     }
                     if (AutoPed == "S")
@@ -1669,6 +1672,59 @@ namespace SplitCamionetas
             SqlCommand cmd = new SqlCommand(Cadena, thisConnection);
             string Valor = Convert.ToString(cmd.ExecuteScalar());
             return Valor;
+        }
+
+        // Diagnostico del desfase de CAJAS_SUR / SURTIDO contra tb_det_embarque: lee el contador antes y despues de cada suma del guardado.
+        // Devuelve -1 si no se pudo leer. Nunca debe impedir el guardado.
+        private int LeeSurtidoActual(string tipo, string prod, string recibo, string tarima)
+        {
+            try
+            {
+                string consulta = tipo == "PTC"
+                    ? "SELECT MAX(SURTIDO) FROM TB_DET_TRAZABILIDAD WHERE PROD_CLAVE = @prod AND RECIBO = @recibo AND TIPO = 'PTC' AND TARIMA = @tarima"
+                    : "SELECT MAX(CAJAS_SUR) FROM TB_DET_ETI_FINAL WHERE CVE_PROD = @prod AND FOLIO = @recibo AND TARIMA = @tarima";
+                using (var cmdLee = new SqlCommand(consulta, thisConnection))
+                {
+                    cmdLee.Parameters.AddWithValue("@prod", prod.Trim());
+                    cmdLee.Parameters.AddWithValue("@recibo", recibo.Trim());
+                    cmdLee.Parameters.AddWithValue("@tarima", Convert.ToInt32(tarima));
+                    object valor = cmdLee.ExecuteScalar();
+                    return (valor == null || valor == DBNull.Value) ? -1 : Convert.ToInt32(valor);
+                }
+            }
+            catch (System.Exception exLee)
+            {
+                Android.Util.Log.Warn("SPLIT_BITACORA", "No se pudo leer el surtido: " + exLee.Message);
+                return -1;
+            }
+        }
+
+        // Registra en tb_registro_movimientos (tipo_mov DIAGSUR) el antes/despues de la suma. "dif" distinto de 0 indica que el contador
+        // cambio por otro lado entre las dos lecturas (guardado simultaneo de otra camioneta u otro proceso).
+        private void RegistraBitacoraSurtido(string tipo, string recibo, string prod, string tarima, string pedido, int cajas, int antes, int despues, string origen)
+        {
+            try
+            {
+                string detalle = tipo + "|" + prod.Trim() + "|T" + tarima.Trim() + "|+" + cajas + "|antes " + antes + "|despues " + despues + "|dif " + (despues - antes - cajas) + "|" + origen;
+                if (detalle.Length > 200) detalle = detalle.Substring(0, 200);
+                string compu = "CEL " + imei;
+                if (compu.Length > 20) compu = compu.Substring(0, 20);
+                using (var cmdBit = new SqlCommand("INSERT INTO tb_registro_movimientos(fecha, nom_compu, nom_usu, tipo_mov, op_clave, folio, detalle, sistema, mov_folio) " +
+                                                   "VALUES(GETDATE(), @compu, @usu, 'DIAGSUR', '7.10', @folio, @detalle, 'SPLITCA', @mov)", thisConnection))
+                {
+                    cmdBit.Parameters.AddWithValue("@compu", compu);
+                    cmdBit.Parameters.AddWithValue("@usu", (muser ?? "").Trim());
+                    cmdBit.Parameters.AddWithValue("@folio", recibo.Trim());
+                    cmdBit.Parameters.AddWithValue("@detalle", detalle);
+                    cmdBit.Parameters.AddWithValue("@mov", (pedido ?? "").Trim());
+                    cmdBit.ExecuteNonQuery();
+                }
+                Android.Util.Log.Info("SPLIT_BITACORA", detalle);
+            }
+            catch (System.Exception exBit)
+            {
+                Android.Util.Log.Warn("SPLIT_BITACORA", "No se pudo registrar la bitacora: " + exBit.Message);
+            }
         }
 
         private string traenom(string cve)
