@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 		  package="SplitCamionetas.SplitCamionetas"
 		  android:installLocation="internalOnly"
-		  android:versionCode="59"
-		  android:versionName="8.3">
+		  android:versionCode="60"
+		  android:versionName="8.4">
 	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="34" />
 	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
